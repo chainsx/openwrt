@@ -1,0 +1,7 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+#include "rk3328-orangepi-r1-plus.dts"
+
+/ {
+	model = "Xunlong Orange Pi R1 Plus LTS";
+	compatible = "xunlong,orangepi-r1-plus-lts", "rockchip,rk3328";
+};

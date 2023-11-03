@@ -1,0 +1,54 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+
+/dts-v1/;
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/pinctrl/rockchip.h>
+#include "rk3568.dtsi"
+
+/ {
+	model = "Ariaboard Photonicat";
+	compatible = "ariaboard,photonicat", "rockchip,rk3568";
+
+	chosen: chosen {
+		stdout-path = "serial2:1500000n8";
+	};
+
+	vcc3v3_sd: vcc3v3_sd {
+		compatible = "regulator-fixed";
+		gpio = <&gpio0 RK_PB6 GPIO_ACTIVE_LOW>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&vcc_sd_h>;
+		regulator-boot-on;
+		regulator-name = "vcc3v3_sd";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+	};
+};
+
+&pinctrl {
+	vcc_sd {
+		vcc_sd_h: vcc-sd-h {
+			rockchip,pins = <0 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>;
+		};
+	};
+};
+
+&sdhci {
+	bus-width = <8>;
+	max-frequency = <200000000>;
+	non-removable;
+	status = "okay";
+};
+
+&sdmmc0 {
+	max-frequency = <52000000>;
+	status = "okay";
+};
+
+&sdmmc1 {
+	status = "okay";
+};
+
+&uart2 {
+	status = "okay";
+};
