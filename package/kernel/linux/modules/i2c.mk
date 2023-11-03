@@ -84,6 +84,49 @@ endef
 $(eval $(call KernelPackage,i2c-algo-pcf))
 
 
+I2C_CCGS_UCSI_MODULES:= \
+  CONFIG_I2C_CCGX_UCSI:drivers/i2c/busses/i2c-ccgx-ucsi
+
+define KernelPackage/i2c-ccgs-ucsi
+  $(call i2c_defaults,$(I2C_CCGS_UCSI_MODULES),58)
+  TITLE:=Cypress CCGx Type-C controller
+  DEPENDS:=+kmod-i2c-core +kmod-regmap-core
+  HIDDEN:=y
+endef
+
+
+$(eval $(call KernelPackage,i2c-ccgs-ucsi))
+
+
+I2C_DWCORE_MODULES:= \
+  CONFIG_I2C_DESIGNWARE_CORE:drivers/i2c/busses/i2c-designware-core
+
+define KernelPackage/i2c-designware-core
+  $(call i2c_defaults,$(I2C_DWCORE_MODULES),58)
+  TITLE:=Synopsys DesignWare I2C core
+  DEPENDS:=+kmod-i2c-core +kmod-regmap-core
+  HIDDEN:=y
+endef
+
+$(eval $(call KernelPackage,i2c-designware-core))
+
+
+I2C_DWPCI_MODULES:= \
+  CONFIG_I2C_DESIGNWARE_PCI:drivers/i2c/busses/i2c-designware-pci
+
+define KernelPackage/i2c-designware-pci
+  $(call i2c_defaults,$(I2C_DWPCI_MODULES),59)
+  TITLE:=Synopsys DesignWare PCI
+  DEPENDS:=@PCI_SUPPORT +kmod-i2c-designware-core +kmod-i2c-ccgs-ucsi
+endef
+
+define KernelPackage/i2c-designware-pci/description
+ Support for Synopsys DesignWare I2C controller. Only master mode is supported.
+endef
+
+$(eval $(call KernelPackage,i2c-designware-pci))
+
+
 I2C_GPIO_MODULES:= \
   CONFIG_I2C_GPIO:drivers/i2c/busses/i2c-gpio
 
@@ -155,6 +198,22 @@ define KernelPackage/i2c-mux-gpio/description
 endef
 
 $(eval $(call KernelPackage,i2c-mux-gpio))
+
+
+I2C_MUX_REG_MODULES:= \
+  CONFIG_I2C_MUX_REG:drivers/i2c/muxes/i2c-mux-reg
+
+define KernelPackage/i2c-mux-reg
+  $(call i2c_defaults,$(I2C_MUX_REG_MODULES),51)
+  TITLE:=Register-based I2C mux/switches
+  DEPENDS:=+kmod-i2c-mux
+endef
+
+define KernelPackage/i2c-mux-reg/description
+ Kernel modules for register-based I2C bus mux/switching devices
+endef
+
+$(eval $(call KernelPackage,i2c-mux-reg))
 
 
 I2C_MUX_PCA9541_MODULES:= \
