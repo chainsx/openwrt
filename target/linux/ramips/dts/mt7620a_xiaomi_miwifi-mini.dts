@@ -8,8 +8,8 @@
 	model = "Xiaomi MiWiFi Mini";
 
 	aliases {
-		led-boot = &led_blue;
-		led-failsafe = &led_blue;
+		led-boot = &led_yellow;
+		led-failsafe = &led_red;
 		led-running = &led_blue;
 		led-upgrade = &led_blue;
 		label-mac-device = &ethernet;
@@ -25,17 +25,31 @@
 		led_blue: blue {
 			label = "blue:status";
 			gpios = <&gpio1 0 GPIO_ACTIVE_LOW>;
-			default-state = "on";
 		};
 
-		yellow {
+		led_yellow: yellow {
 			label = "yellow:status";
 			gpios = <&gpio1 2 GPIO_ACTIVE_LOW>;
 		};
 
-		red {
+		led_red: red {
 			label = "red:status";
 			gpios = <&gpio1 5 GPIO_ACTIVE_LOW>;
+		};
+
+		wan {
+			label = "green:wan";
+			gpios = <&gpio2 4 GPIO_ACTIVE_LOW>;
+		};
+
+		lan1 {
+			label = "green:lan1";
+			gpios = <&gpio2 1 GPIO_ACTIVE_LOW>;
+		};
+
+		lan2 {
+			label = "green:lan2";
+			gpios = <&gpio2 0 GPIO_ACTIVE_LOW>;
 		};
 	};
 
@@ -54,13 +68,18 @@
 	status = "okay";
 };
 
+&gpio2 {
+	status = "okay";
+};
+
 &spi0 {
 	status = "okay";
 
 	flash@0 {
 		compatible = "jedec,spi-nor";
 		reg = <0>;
-		spi-max-frequency = <10000000>;
+		spi-max-frequency = <70000000>;
+		m25p,fast-read;
 
 		partitions {
 			compatible = "fixed-partitions";
@@ -70,12 +89,12 @@
 			partition@0 {
 				label = "u-boot";
 				reg = <0x0 0x30000>;
+				read-only;
 			};
 
 			partition@30000 {
 				label = "u-boot-env";
 				reg = <0x30000 0x10000>;
-				read-only;
 			};
 
 			factory: partition@40000 {
@@ -118,10 +137,8 @@
 };
 
 &ethernet {
-	pinctrl-names = "default";
-	pinctrl-0 = <&ephy_pins>;
-
-	mtd-mac-address = <&factory 0x28>;
+	nvmem-cells = <&macaddr_factory_28>;
+	nvmem-cell-names = "mac-address";
 
 	mediatek,portmap = "llllw";
 };
@@ -148,7 +165,17 @@
 
 &state_default {
 	gpio {
-		groups = "i2c", "rgmii1";
+		groups = "ephy", "i2c", "rgmii1";
 		function = "gpio";
+	};
+};
+
+&factory {
+	compatible = "nvmem-cells";
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	macaddr_factory_28: macaddr@28 {
+		reg = <0x28 0x6>;
 	};
 };

@@ -5,11 +5,6 @@
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/image.mk
 
-define Device/dsa-migration
-  DEVICE_COMPAT_VERSION := 1.1
-  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
-endef
-
 define Image/Prepare
 	rm -f $(KDIR)/fs_mark
 	echo -ne '\xde\xad\xc0\xde' > $(KDIR)/fs_mark
@@ -93,6 +88,12 @@ define Build/luxul-lxl
 	mv $@.new $@
 endef
 
+# Outputs a lzma compressed U-Boot that start at 0x00008000
+# just like the D-Link boot loaders expect
+define Build/dlink-uboot-bin
+	$(STAGING_DIR_HOST)/bin/lzma e $(STAGING_DIR_IMAGE)/$(DEVICE_NAME)-u-boot.bin -d16 $@
+endef
+
 define Build/seama-nand
 	# Seama entity
 	$(STAGING_DIR_HOST)/bin/oseama \
@@ -110,17 +111,33 @@ define Build/seama-nand
 		-i $@.entity
 endef
 
+define Build/dwl8610ap-image
+	mkdir -p $@.tmptar
+	# The DWL8610AP pretends to be a Broadcom reference design
+	echo "bcm953012er" > $@.tmptar/board
+	echo "LVL7" > $@.tmptar/model
+	# Something high beyond what D-Link has put out
+	echo "5.0.0.0" > $@.tmptar/version
+	# Create rootfs.bin, this is just a NAND image including everything
+	cp $@ $@.tmptar/rootfs.bin
+	# Hash the rootfs.bin
+	cat $@.tmptar/rootfs.bin | md5sum > $@.tmptar/rootfs.md5
+	cd $@.tmptar && tar -c -f $@.new *
+	rm -rf $@.tmptar
+	mv $@.new $@
+endef
+
 DEVICE_VARS += ASUS_PRODUCTID
 DEVICE_VARS += BUFFALO_TAG_PLATFORM BUFFALO_TAG_VERSION BUFFALO_TAG_MINOR
 DEVICE_VARS += SIGNATURE
 DEVICE_VARS += NETGEAR_BOARD_ID NETGEAR_REGION TPLINK_BOARD
 DEVICE_VARS += LUXUL_BOARD
 
-IEEE8021X := wpad-openssl
+IEEE8021X := wpad-basic-mbedtls
 B43 := $(IEEE8021X) kmod-b43
 BRCMFMAC_43602A1 := $(IEEE8021X) kmod-brcmfmac brcmfmac-firmware-43602a1-pcie
 BRCMFMAC_4366B1 := $(IEEE8021X) kmod-brcmfmac brcmfmac-firmware-4366b1-pcie
-BRCMFMAC_4366C0 := $(IEEE8021X) kmod-brcmfmac brcmfmac-firmware-4366c0-pcie-vendor
+BRCMFMAC_4366C0 := $(IEEE8021X) kmod-brcmfmac brcmfmac-firmware-4366c0-pcie
 USB2_PACKAGES := kmod-usb-ohci kmod-usb2 kmod-phy-bcm-ns-usb2
 USB2_PACKAGES += kmod-usb-ledtrig-usbport
 USB3_PACKAGES := $(USB2_PACKAGES) kmod-usb3 kmod-phy-bcm-ns-usb3
@@ -135,7 +152,7 @@ define Device/Default
   KERNEL_INITRAMFS := kernel-bin | append-dtb | lzma-d16 | trx
   FILESYSTEMS := squashfs
   KERNEL_NAME := zImage
-  IMAGE_NAME = $$(IMAGE_PREFIX)-$$(1).$$(2)
+  DEVICE_IMG_NAME = $$(DEVICE_IMG_PREFIX)-$$(1).$$(2)
   IMAGES := trx
   BLOCKSIZE := 128k
   PAGESIZE := 2048
@@ -143,11 +160,18 @@ define Device/Default
 endef
 
 define Device/asus
-  $(Device/dsa-migration)
   DEVICE_VENDOR := ASUS
   IMAGES := trx
   IMAGE/trx := append-ubi | trx-nand | asus-trx
 endef
+
+define Device/asus_rt-ac3100
+  $(call Device/asus)
+  DEVICE_MODEL := RT-AC3100
+  DEVICE_PACKAGES := $(BRCMFMAC_4366B1) $(BRCMFMAC_4366C0) $(USB3_PACKAGES)
+  ASUS_PRODUCTID := RT-AC3100
+endef
+TARGET_DEVICES += asus_rt-ac3100
 
 define Device/asus_rt-ac56u
   $(call Device/asus)
@@ -195,7 +219,6 @@ TARGET_DEVICES += asus_rt-n18u
 # TRX with initramfs kernel. It's not possible right now so let's just build
 # plain initramfs kernel as it may be more useful.
 define Device/buffalo/Default
-  $(Device/dsa-migration)
   DEVICE_VENDOR := Buffalo
   KERNEL_INITRAMFS_SUFFIX = $$(KERNEL_SUFFIX)
   KERNEL_INITRAMFS = $$(KERNEL)
@@ -244,7 +267,6 @@ endef
 TARGET_DEVICES += buffalo_wzr-1750dhp
 
 define Device/dlink
-  $(Device/dsa-migration)
   DEVICE_VENDOR := D-Link
   IMAGES := bin
   IMAGE/bin := append-ubi | seama-nand
@@ -258,8 +280,31 @@ define Device/dlink_dir-885l
 endef
 TARGET_DEVICES += dlink_dir-885l
 
+define Device/dlink_dir-890l
+  DEVICE_VENDOR := D-Link
+  DEVICE_MODEL := DIR-890L
+  DEVICE_PACKAGES := $(BRCMFMAC_43602A1) $(USB2_PACKAGES) $(USB3_PACKAGES)
+  # Layout: U-boot (128kb max) followed by kernel and appended DTB.
+  # This is done because the boot loader will only read the first 2 MB
+  # from the flash and decompress the LZMA it finds there after the
+  # SEAMA header. Since the compressed kernel will not fit in 2 MB,
+  # we put U-Boot there and let U-Boot read and execute the kernel.
+  KERNEL := dlink-uboot-bin | pad-to 128k | append-kernel | append-dtb
+  $(Device/dlink)
+  SIGNATURE := wrgac36_dlink.2013gui_dir890
+endef
+TARGET_DEVICES += dlink_dir-890l
+
+define Device/dlink_dwl-8610ap
+  DEVICE_VENDOR := D-Link
+  DEVICE_MODEL := DWL-8610AP
+  DEVICE_PACKAGES := $(B43)
+  IMAGES := factory.tar
+  IMAGE/factory.tar := append-ubi | trx-nand | dwl8610ap-image
+endef
+TARGET_DEVICES += dlink_dwl-8610ap
+
 define Device/linksys_ea6300-v1
-  $(Device/dsa-migration)
   DEVICE_VENDOR := Linksys
   DEVICE_MODEL := EA6300
   DEVICE_VARIANT := v1
@@ -268,7 +313,6 @@ endef
 TARGET_DEVICES += linksys_ea6300-v1
 
 define Device/linksys_ea6500-v2
-  $(Device/dsa-migration)
   DEVICE_VENDOR := Linksys
   DEVICE_MODEL := EA6500
   DEVICE_VARIANT := v2
@@ -277,7 +321,6 @@ endef
 TARGET_DEVICES += linksys_ea6500-v2
 
 define Device/linksys_ea9200
-  $(Device/dsa-migration)
   DEVICE_VENDOR := Linksys
   DEVICE_MODEL := EA9200
   DEVICE_VARIANT := v1
@@ -286,7 +329,6 @@ endef
 TARGET_DEVICES += linksys_ea9200
 
 define Device/linksys_ea9500
-  $(Device/dsa-migration)
   DEVICE_VENDOR := Linksys
   DEVICE_MODEL := EA9500
   DEVICE_PACKAGES := $(BRCMFMAC_4366C0) $(USB3_PACKAGES)
@@ -295,7 +337,6 @@ endef
 TARGET_DEVICES += linksys_ea9500
 
 define Device/luxul
-  $(Device/dsa-migration)
   DEVICE_VENDOR := Luxul
   IMAGES := lxl
   IMAGE/lxl := append-ubi | trx-nand | luxul-lxl
@@ -335,11 +376,27 @@ define Device/luxul_xwr-3150
 endef
 TARGET_DEVICES += luxul_xwr-3150
 
+define Device/meraki_mr26
+  DEVICE_VENDOR := Meraki
+  DEVICE_MODEL := MR26
+  DEVICE_PACKAGES := $(B43) kmod-i2c-bcm-iproc kmod-eeprom-at24 \
+	kmod-hwmon-ina2xx kmod-leds-uleds nu801
+  DEVICE_DTS := bcm53015-meraki-mr26
+# resize the initramfs to fit the size of the existing part.safe.
+  KERNEL_LOADADDR := 0x00008000
+  KERNEL_INITRAMFS_SUFFIX := .bin
+  KERNEL_INITRAMFS := kernel-bin | append-dtb | gzip | uImage gzip | pad-to 9310208
+# LZMA is not supported by the uboot
+  KERNEL := kernel-bin | append-dtb | gzip | uImage gzip
+  IMAGES += sysupgrade.bin
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += meraki_mr26
+
 define Device/meraki_mr32
-  $(Device/dsa-migration)
   DEVICE_VENDOR := Meraki
   DEVICE_MODEL := MR32
-  DEVICE_PACKAGES := $(B43) kmod-i2c-bcm-iproc kmod-i2c-gpio kmod-eeprom-at24 \
+  DEVICE_PACKAGES := $(B43) kmod-i2c-bcm-iproc kmod-eeprom-at24 \
 	kmod-leds-pwm kmod-hwmon-ina2xx kmod-bluetooth
   DEVICE_DTS := bcm53016-meraki-mr32
 # Meraki FW r23 tries to resize the part.safe partition before it will
@@ -347,11 +404,12 @@ define Device/meraki_mr32
 # if the partition is smaller than the old one.
   KERNEL_LOADADDR := 0x00008000
   KERNEL_INITRAMFS_SUFFIX := .bin
+  DEVICE_DTS_DELIMITER := @
+  DEVICE_DTS_CONFIG := config@1
   KERNEL_INITRAMFS := kernel-bin | fit none $$(DTS_DIR)/$$(DEVICE_DTS).dtb | \
 	pad-to 10362880
   KERNEL := kernel-bin | fit none $$(DTS_DIR)/$$(DEVICE_DTS).dtb
-  IMAGES := sysupgrade.bin
-# Currently the only device that uses the new image check
+  IMAGES += sysupgrade.bin
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
 
 # The loader is specifically looking for fdt@2:
@@ -362,7 +420,6 @@ endef
 TARGET_DEVICES += meraki_mr32
 
 define Device/netgear
-  $(Device/dsa-migration)
   DEVICE_VENDOR := NETGEAR
   IMAGES := chk
   IMAGE/chk := append-ubi | trx-nand | netgear-chk
@@ -420,7 +477,6 @@ endef
 TARGET_DEVICES += netgear_r8500
 
 define Device/smartrg_sr400ac
-  $(Device/dsa-migration)
   DEVICE_VENDOR := SmartRG
   DEVICE_MODEL := SR400ac
   DEVICE_PACKAGES := $(BRCMFMAC_43602A1) $(USB3_PACKAGES)
@@ -432,16 +488,18 @@ endef
 TARGET_DEVICES += smartrg_sr400ac
 
 define Device/phicomm_k3
-  $(Device/dsa-migration)
   DEVICE_VENDOR := PHICOMM
   DEVICE_MODEL := K3
-  DEVICE_PACKAGES := $(BRCMFMAC_4366C0) $(USB3_PACKAGES) luci-app-k3screenctrl
+  DEVICE_ALT0_VENDOR := Wavlink
+  DEVICE_ALT0_MODEL := QUANTUM DAX
+  DEVICE_ALT1_VENDOR := Wavlink
+  DEVICE_ALT1_MODEL := WL-WN538A8
+  DEVICE_PACKAGES := $(BRCMFMAC_4366C0) $(USB3_PACKAGES)
   IMAGES := trx
 endef
 TARGET_DEVICES += phicomm_k3
 
 define Device/tenda_ac9
-  $(Device/dsa-migration)
   DEVICE_VENDOR := Tenda
   DEVICE_MODEL := AC9
   DEVICE_PACKAGES := $(B43) $(USB2_PACKAGES)
@@ -451,7 +509,6 @@ endef
 TARGET_DEVICES += tenda_ac9
 
 define Device/tplink_archer-c5-v2
-  $(Device/dsa-migration)
   DEVICE_VENDOR := TP-Link
   DEVICE_MODEL := Archer C5
   DEVICE_VARIANT := v2
@@ -461,10 +518,9 @@ define Device/tplink_archer-c5-v2
   TPLINK_BOARD := ARCHER-C5-V2
   BROKEN := y
 endef
-TARGET_DEVICES += tplink_archer-c5-v2
+#TARGET_DEVICES += tplink_archer-c5-v2
 
 define Device/tplink_archer-c9-v1
-  $(Device/dsa-migration)
   DEVICE_VENDOR := TP-Link
   DEVICE_MODEL := Archer C9
   DEVICE_VARIANT := v1
@@ -474,6 +530,6 @@ define Device/tplink_archer-c9-v1
   TPLINK_BOARD := ARCHERC9
   BROKEN := y
 endef
-TARGET_DEVICES += tplink_archer-c9-v1
+#TARGET_DEVICES += tplink_archer-c9-v1
 
 $(eval $(call BuildImage))

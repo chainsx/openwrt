@@ -10,27 +10,27 @@
 	model = "ZyXEL NR7101";
 
 	aliases {
-		led-boot = &power;
-		led-failsafe = &power;
-		led-running = &power;
-		led-upgrade = &power;
+		led-boot = &led_system_green;
+		led-failsafe = &led_system_green;
+		led-running = &led_system_green;
+		led-upgrade = &led_system_green;
 		label-mac-device = &gmac0;
 	};
 
 	leds {
 		compatible = "gpio-leds";
 
-		led@13 {
+		system_yellow {
 			label = "yellow:system";
 			gpios = <&gpio 13 GPIO_ACTIVE_HIGH>;
 		};
 
-		power: led@14 {
+		led_system_green: system_green {
 			label = "green:system";
 			gpios = <&gpio 14 GPIO_ACTIVE_HIGH>;
 		};
 
-		led@15 {
+		system_red {
 			label = "red:system";
 			gpios = <&gpio 15 GPIO_ACTIVE_HIGH>;
 		};
@@ -89,9 +89,20 @@
 		};
 
 		factory: partition@100000 {
+			compatible = "nvmem-cells";
 			label = "Factory";
 			reg = <0x100000 0x40000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
 			read-only;
+
+			eeprom_factory_0: eeprom@0 {
+				reg = <0x0 0x400>;
+			};
+
+			macaddr_factory_e000: macaddr@e000 {
+				reg = <0xe000 0x6>;
+			};
 		};
 
 		partition@140000 {
@@ -139,12 +150,14 @@
 &pcie0 {
 	mt76@0,0 {
 		reg = <0x0000 0 0 0 0>;
-		mediatek,mtd-eeprom = <&factory 0x0>;
+		nvmem-cells = <&eeprom_factory_0>;
+		nvmem-cell-names = "eeprom";
 	};
 };
 
 &gmac0 {
-	mtd-mac-address = <&factory 0xe000>;
+	nvmem-cells = <&macaddr_factory_e000>;
+	nvmem-cell-names = "mac-address";
 };
 
 &switch0 {
@@ -158,7 +171,7 @@
 
 &state_default {
 	gpio {
-		groups = "i2c", "rgmii2", "uart3", "jtag", "wdt";
+		groups = "i2c", "uart3", "jtag", "wdt";
 		function = "gpio";
 	};
 };

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
 
-#include "qcom-ipq8064-v2.0.dtsi"
+#include "qcom-ipq8064-v2.0-smb208.dtsi"
 
 #include <dt-bindings/input/input.h>
 
@@ -8,6 +8,17 @@
 	memory@0 {
 		reg = <0x42000000 0x1e000000>;
 		device_type = "memory";
+	};
+
+	reserved-memory {
+		ramoops@42100000 {
+			compatible = "ramoops";
+			reg = <0x42100000 0x40000>;
+			record-size = <0x4000>;
+			console-size = <0x4000>;
+			ftrace-size = <0x4000>;
+			pmsg-size = <0x4000>;
+		};
 	};
 
 	aliases {
@@ -82,155 +93,180 @@
 			spi-max-frequency = <50000000>;
 			reg = <0>;
 
-			partition@0 {
-				label = "SBL1";
-				reg = <0x0 0x20000>;
-				read-only;
-			};
+			partitions {
+				compatible = "fixed-partitions";
+				#address-cells = <1>;
+				#size-cells = <1>;
 
-			partition@20000 {
-				label = "MIBIB";
-				reg = <0x20000 0x20000>;
-				read-only;
-			};
+				partition@0 {
+					label = "SBL1";
+					reg = <0x0 0x20000>;
+					read-only;
+				};
 
-			partition@40000 {
-				label = "SBL2";
-				reg = <0x40000 0x20000>;
-				read-only;
-			};
+				partition@20000 {
+					label = "MIBIB";
+					reg = <0x20000 0x20000>;
+					read-only;
+				};
 
-			partition@60000 {
-				label = "SBL3";
-				reg = <0x60000 0x30000>;
-				read-only;
-			};
+				partition@40000 {
+					label = "SBL2";
+					reg = <0x40000 0x20000>;
+					read-only;
+				};
 
-			partition@90000 {
-				label = "DDRCONFIG";
-				reg = <0x90000 0x10000>;
-				read-only;
-			};
+				partition@60000 {
+					label = "SBL3";
+					reg = <0x60000 0x30000>;
+					read-only;
+				};
 
-			partition@a0000 {
-				label = "SSD";
-				reg = <0xa0000 0x10000>;
-				read-only;
-			};
+				partition@90000 {
+					label = "DDRCONFIG";
+					reg = <0x90000 0x10000>;
+					read-only;
+				};
 
-			partition@b0000 {
-				label = "TZ";
-				reg = <0xb0000 0x30000>;
-				read-only;
-			};
+				partition@a0000 {
+					label = "SSD";
+					reg = <0xa0000 0x10000>;
+					read-only;
+				};
 
-			partition@e0000 {
-				label = "RPM";
-				reg = <0xe0000 0x20000>;
-				read-only;
-			};
+				partition@b0000 {
+					label = "TZ";
+					reg = <0xb0000 0x30000>;
+					read-only;
+				};
 
-			partition@100000 {
-				label = "fs-uboot";
-				reg = <0x100000 0x70000>;
-				read-only;
-			};
+				partition@e0000 {
+					label = "RPM";
+					reg = <0xe0000 0x20000>;
+					read-only;
+				};
 
-			partition@170000 {
-				label = "uboot-env";
-				reg = <0x170000 0x40000>;
-				read-only;
-			};
+				partition@100000 {
+					label = "fs-uboot";
+					reg = <0x100000 0x70000>;
+					read-only;
+				};
 
-			partition@1b0000 {
-				label = "radio";
-				reg = <0x1b0000 0x40000>;
-				read-only;
-			};
+				partition@170000 {
+					label = "uboot-env";
+					reg = <0x170000 0x40000>;
+					read-only;
+				};
 
-			partition@1f0000 {
-				label = "os-image";
-				reg = <0x1f0000 0x400000>;
-			};
+				partition@1b0000 {
+					label = "radio";
+					reg = <0x1b0000 0x40000>;
+					read-only;
+					compatible = "nvmem-cells";
+					#address-cells = <1>;
+					#size-cells = <1>;
 
-			partition@5f0000 {
-				label = "rootfs";
-				reg = <0x5f0000 0x1900000>;
-			};
+					precal_radio_1000: precal@1000 {
+						reg = <0x1000 0x2f20>;
+					};
 
-			defaultmac: partition@1ef0000 {
-				label = "default-mac";
-				reg = <0x1ef0000 0x00200>;
-				read-only;
-			};
+					precal_radio_5000: precal@5000 {
+						reg = <0x5000 0x2f20>;
+					};
+				};
 
-			partition@1ef0200 {
-				label = "pin";
-				reg = <0x1ef0200 0x00200>;
-				read-only;
-			};
+				partition@1f0000 {
+					label = "os-image";
+					reg = <0x1f0000 0x400000>;
+				};
 
-			partition@1ef0400 {
-				label = "product-info";
-				reg = <0x1ef0400 0x0fc00>;
-				read-only;
-			};
+				partition@5f0000 {
+					label = "rootfs";
+					reg = <0x5f0000 0x1900000>;
+				};
 
-			partition@1f00000 {
-				label = "partition-table";
-				reg = <0x1f00000 0x10000>;
-				read-only;
-			};
+				defaultmac: partition@1ef0000 {
+					label = "default-mac";
+					reg = <0x1ef0000 0x00200>;
+					read-only;
+				};
 
-			partition@1f10000 {
-				label = "soft-version";
-				reg = <0x1f10000 0x10000>;
-				read-only;
-			};
+				partition@1ef0200 {
+					label = "pin";
+					reg = <0x1ef0200 0x00200>;
+					read-only;
+				};
 
-			partition@1f20000 {
-				label = "support-list";
-				reg = <0x1f20000 0x10000>;
-				read-only;
-			};
+				partition@1ef0400 {
+					label = "product-info";
+					reg = <0x1ef0400 0x0fc00>;
+					read-only;
+				};
 
-			partition@1f30000 {
-				label = "profile";
-				reg = <0x1f30000 0x10000>;
-				read-only;
-			};
+				partition@1f00000 {
+					label = "partition-table";
+					reg = <0x1f00000 0x10000>;
+					read-only;
+				};
 
-			partition@1f40000 {
-				label = "default-config";
-				reg = <0x1f40000 0x10000>;
-				read-only;
-			};
+				partition@1f10000 {
+					label = "soft-version";
+					reg = <0x1f10000 0x10000>;
+					read-only;
+				};
 
-			partition@1f50000 {
-				label = "user-config";
-				reg = <0x1f50000 0x40000>;
-				read-only;
-			};
+				partition@1f20000 {
+					label = "support-list";
+					reg = <0x1f20000 0x10000>;
+					read-only;
+				};
 
-			partition@1f90000 {
-				label = "qos-db";
-				reg = <0x1f90000 0x40000>;
-				read-only;
-			};
+				partition@1f30000 {
+					label = "profile";
+					reg = <0x1f30000 0x10000>;
+					read-only;
+				};
 
-			partition@1fd0000 {
-				label = "usb-config";
-				reg = <0x1fd0000 0x10000>;
-				read-only;
-			};
+				partition@1f40000 {
+					label = "default-config";
+					reg = <0x1f40000 0x10000>;
+					read-only;
+				};
 
-			partition@1fe0000 {
-				label = "log";
-				reg = <0x1fe0000 0x20000>;
-				read-only;
+				partition@1f50000 {
+					label = "user-config";
+					reg = <0x1f50000 0x40000>;
+					read-only;
+				};
+
+				partition@1f90000 {
+					label = "qos-db";
+					reg = <0x1f90000 0x40000>;
+					read-only;
+				};
+
+				partition@1fd0000 {
+					label = "usb-config";
+					reg = <0x1fd0000 0x10000>;
+					read-only;
+				};
+
+				partition@1fe0000 {
+					label = "log";
+					reg = <0x1fe0000 0x20000>;
+					read-only;
+				};
 			};
 		};
 	};
+};
+
+&hs_phy_0 {
+	status = "okay";
+};
+
+&ss_phy_0 {
+	status = "okay";
 };
 
 &usb3_0 {
@@ -238,6 +274,14 @@
 
 	pinctrl-0 = <&usb0_pwr_en_pin>;
 	pinctrl-names = "default";
+};
+
+&hs_phy_1 {
+	status = "okay";
+};
+
+&ss_phy_1 {
+	status = "okay";
 };
 
 &usb3_1 {
@@ -249,11 +293,42 @@
 
 &pcie0 {
 	status = "okay";
+
+	bridge@0,0 {
+		reg = <0x00000000 0 0 0 0>;
+		#address-cells = <3>;
+		#size-cells = <2>;
+		ranges;
+
+		wifi@1,0 {
+			compatible = "pci168c,0040";
+			reg = <0x00010000 0 0 0 0>;
+
+			nvmem-cells = <&macaddr_defaultmac_8>, <&precal_radio_1000>;
+			nvmem-cell-names = "mac-address", "pre-calibration";
+			mac-address-increment = <(-1)>;
+		};
+	};
 };
 
 &pcie1 {
 	status = "okay";
 	max-link-speed = <1>;
+
+	bridge@0,0 {
+		reg = <0x00000000 0 0 0 0>;
+		#address-cells = <3>;
+		#size-cells = <2>;
+		ranges;
+
+		wifi@1,0 {
+			compatible = "pci168c,0040";
+			reg = <0x00010000 0 0 0 0>;
+
+			nvmem-cells = <&macaddr_defaultmac_8>, <&precal_radio_5000>;
+			nvmem-cell-names = "mac-address", "pre-calibration";
+		};
+	};
 };
 
 &mdio0 {
@@ -262,21 +337,103 @@
 	pinctrl-0 = <&mdio0_pins>;
 	pinctrl-names = "default";
 
-	phy0: ethernet-phy@0 {
-		reg = <0>;
-		qca,ar8327-initvals = <
-			0x00004 0x7600000   /* PAD0_MODE */
-			0x00008 0x1000000   /* PAD5_MODE */
-			0x0000c 0x80        /* PAD6_MODE */
-			0x000e4 0x6a545     /* MAC_POWER_SEL */
-			0x000e0 0xc74164de  /* SGMII_CTRL */
-			0x0007c 0x4e        /* PORT0_STATUS */
-			0x00094 0x4e        /* PORT6_STATUS */
-			>;
-	};
+	switch@10 {
+		compatible = "qca,qca8337";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x10>;
 
-	phy4: ethernet-phy@4 {
-		reg = <4>;
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@0 {
+				reg = <0>;
+				label = "cpu";
+				ethernet = <&gmac1>;
+				phy-mode = "rgmii";
+				tx-internal-delay-ps = <1000>;
+				rx-internal-delay-ps = <1000>;
+
+				fixed-link {
+					speed = <1000>;
+					full-duplex;
+				};
+			};
+
+			port@1 {
+				reg = <1>;
+				label = "lan4";
+				phy-mode = "internal";
+				phy-handle = <&phy_port1>;
+			};
+
+			port@2 {
+				reg = <2>;
+				label = "lan3";
+				phy-mode = "internal";
+				phy-handle = <&phy_port2>;
+			};
+
+			port@3 {
+				reg = <3>;
+				label = "lan2";
+				phy-mode = "internal";
+				phy-handle = <&phy_port3>;
+			};
+
+			port@4 {
+				reg = <4>;
+				label = "lan1";
+				phy-mode = "internal";
+				phy-handle = <&phy_port4>;
+			};
+
+			port@5 {
+				reg = <5>;
+				label = "wan";
+				phy-mode = "internal";
+				phy-handle = <&phy_port5>;
+			};
+
+			port@6 {
+				reg = <6>;
+				label = "cpu";
+				ethernet = <&gmac2>;
+				phy-mode = "sgmii";
+				qca,sgmii-enable-pll;
+
+				fixed-link {
+					speed = <1000>;
+					full-duplex;
+				};
+			};
+		};
+
+		mdio {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			phy_port1: phy@0 {
+				reg = <0>;
+			};
+
+			phy_port2: phy@1 {
+				reg = <1>;
+			};
+
+			phy_port3: phy@2 {
+				reg = <2>;
+			};
+
+			phy_port4: phy@3 {
+				reg = <3>;
+			};
+
+			phy_port5: phy@4 {
+				reg = <4>;
+			};
+		};
 	};
 };
 
@@ -288,8 +445,9 @@
 	pinctrl-0 = <&rgmii2_pins>;
 	pinctrl-names = "default";
 
-	mtd-mac-address = <&defaultmac 0x8>;
-	mtd-mac-address-increment = <1>;
+	nvmem-cells = <&macaddr_defaultmac_8>;
+	nvmem-cell-names = "mac-address";
+	mac-address-increment = <1>;
 
 	fixed-link {
 		speed = <1000>;
@@ -302,7 +460,8 @@
 	phy-mode = "sgmii";
 	qcom,id = <2>;
 
-	mtd-mac-address = <&defaultmac 0x8>;
+	nvmem-cells = <&macaddr_defaultmac_8>;
+	nvmem-cell-names = "mac-address";
 
 	fixed-link {
 		speed = <1000>;
@@ -312,4 +471,14 @@
 
 &adm_dma {
 	status = "okay";
+};
+
+&defaultmac {
+	compatible = "nvmem-cells";
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	macaddr_defaultmac_8: macaddr@8 {
+		reg = <0x8 0x6>;
+	};
 };
