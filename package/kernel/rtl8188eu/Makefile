@@ -5,13 +5,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rtl8188eu
-PKG_RELEASE:=$(AUTORELEASE)
+PKG_RELEASE:=2
 
 PKG_SOURCE_URL:=https://github.com/aircrack-ng/rtl8188eus.git
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2022-12-19
-PKG_SOURCE_VERSION:=67be0af3736adc72fbf4f234c0d1d32afa8d5d06
-PKG_MIRROR_HASH:=384ed3451242746c5fd544f8f10badc52b8dcce792fdd4c661516b6abb2fc91b
+PKG_SOURCE_DATE:=2023-01-01
+PKG_SOURCE_VERSION:=f8ead579311f7eb800e769a7fd216d0c5cb0c4a3
+PKG_MIRROR_HASH:=f17ad92b68f965e9839cfffafb1793ea18a243e26877762bdcd86dd86c7efc06
 
 PKG_BUILD_PARALLEL:=1
 
@@ -23,7 +23,7 @@ include $(INCLUDE_DIR)/package.mk
 define KernelPackage/rtl8188eu
   SUBMENU:=Wireless Drivers
   TITLE:=Realtek 8188EU(S)/8188ETV support
-  DEPENDS:=+kmod-cfg80211 +kmod-usb-core +@DRIVER_11N_SUPPORT
+  DEPENDS:=+kmod-cfg80211 +kmod-usb-core
   FILES:=$(PKG_BUILD_DIR)/rtl8188eu.ko
   AUTOLOAD:=$(call AutoProbe,rtl8188eu)
 endef

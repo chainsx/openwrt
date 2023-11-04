@@ -107,7 +107,7 @@ static struct bh_map button_map[] = {
 static __printf(3, 4)
 int bh_event_add_var(struct bh_event *event, int argv, const char *format, ...)
 {
-	static char buf[128];
+	char buf[128];
 	char *s;
 	va_list args;
 	int len;
@@ -504,6 +504,13 @@ static int gpio_keys_button_probe(struct platform_device *pdev,
 			dev_err(dev, "only supports buttons or switches\n");
 			error = -EINVAL;
 			goto out;
+		}
+
+		if (button->irq) {
+			dev_err(dev, "skipping button %s (only gpio buttons supported)\n",
+				button->desc);
+			bdata->b = &pdata->buttons[i];
+			continue;
 		}
 
 		if (gpio_is_valid(button->gpio)) {

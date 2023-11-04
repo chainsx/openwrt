@@ -5,13 +5,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rtl8192eu
-PKG_RELEASE:=$(AUTORELEASE)
+PKG_RELEASE:=2
 
 PKG_SOURCE_URL:=https://github.com/Mange/rtl8192eu-linux-driver.git
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2022-12-26
-PKG_SOURCE_VERSION:=aeed529c77282cc0d8a2b6eb29186711e25555ce
-PKG_MIRROR_HASH:=83a158ecdc9c1642d4fbad9647d6b6853067a91a25b499a1a7dd719b556ccbe5
+PKG_SOURCE_DATE:=2023-06-13
+PKG_SOURCE_VERSION:=f2fc8af7ab58d2123eed1aa4428e713cdfc27976
+PKG_MIRROR_HASH:=2d86eee2b31d3f757bc7a1f902c5b52f9c6105f56810a5ddaaa9bf9d2f532a71
 
 PKG_BUILD_PARALLEL:=1
 
@@ -23,7 +23,7 @@ include $(INCLUDE_DIR)/package.mk
 define KernelPackage/rtl8192eu
   SUBMENU:=Wireless Drivers
   TITLE:=Realtek RTL8192EU support
-  DEPENDS:=+kmod-cfg80211 +kmod-usb-core +@DRIVER_11N_SUPPORT
+  DEPENDS:=+kmod-cfg80211 +kmod-usb-core
   FILES:=$(PKG_BUILD_DIR)/rtl8192eu.ko
   AUTOLOAD:=$(call AutoProbe,rtl8192eu)
 endef

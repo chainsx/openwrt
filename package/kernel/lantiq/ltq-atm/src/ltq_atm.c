@@ -200,8 +200,7 @@ static inline void mailbox_aal_rx_handler(void);
 static irqreturn_t mailbox_irq_handler(int, void *);
 static inline void mailbox_signal(unsigned int, int);
 static void do_ppe_tasklet(unsigned long);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5,9,0) && \
-    !(LINUX_VERSION_CODE < KERNEL_VERSION(5,5,0) && LINUX_VERSION_CODE > KERNEL_VERSION(5,4,235))
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5,9,0)
 DECLARE_TASKLET(g_dma_tasklet, do_ppe_tasklet, 0);
 #else
 DECLARE_TASKLET_OLD(g_dma_tasklet, do_ppe_tasklet);

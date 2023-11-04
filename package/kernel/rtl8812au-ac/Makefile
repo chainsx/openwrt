@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rtl8812au-ac
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE_URL:=https://github.com/aircrack-ng/rtl8812au.git
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2022-12-23
-PKG_SOURCE_VERSION:=ee299797bcd54d5b8c58d2da8576c54cea1a03a2
-PKG_MIRROR_HASH:=fb72b28e123f9dead470a0b94ef9d56e59c10e4f0baf09ba820e5c34a743decc
+PKG_SOURCE_DATE:=2023-07-23
+PKG_SOURCE_VERSION:=04f600ee54a414b871aea509fcd4709838c8c522
+PKG_MIRROR_HASH:=df8aa45fb2bc2bc706b8fe49b4b7c4216b64232286845bb7dc231d0be309ccac
 
 PKG_LICENSE:=GPL-2.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -30,7 +30,7 @@ include $(INCLUDE_DIR)/package.mk
 define KernelPackage/rtl8812au-ac
   SUBMENU:=Wireless Drivers
   TITLE:=Realtek RTL8812AU/21AU wireless drivers
-  DEPENDS:=+kmod-cfg80211 +kmod-usb-core +@DRIVER_11N_SUPPORT +@DRIVER_11AC_SUPPORT
+  DEPENDS:=+kmod-cfg80211 +kmod-usb-core +@DRIVER_11AC_SUPPORT
   FILES:=$(PKG_BUILD_DIR)/rtl8812au.ko
   AUTOLOAD:=$(call AutoProbe,rtl8812au)
   CONFLICTS:=kmod-rtl8812au-ct
