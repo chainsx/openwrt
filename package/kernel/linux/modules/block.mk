@@ -65,7 +65,7 @@ define KernelPackage/ata-ahci-platform
     $(LINUX_DIR)/drivers/ata/ahci_platform.ko \
     $(LINUX_DIR)/drivers/ata/libahci_platform.ko
   AUTOLOAD:=$(call AutoLoad,40,libahci libahci_platform ahci_platform,1)
-  $(call AddDepends/ata,@TARGET_ipq806x||TARGET_layerscape||TARGET_sunxi)
+  $(call AddDepends/ata,@TARGET_ipq806x||TARGET_layerscape||TARGET_rockchip||TARGET_sunxi)
 endef
 
 define KernelPackage/ata-ahci-platform/description
@@ -496,16 +496,16 @@ $(eval $(call KernelPackage,nbd))
 define KernelPackage/nvme
   SUBMENU:=$(BLOCK_MENU)
   TITLE:=NVM Express block device
-  DEPENDS:=@PCI_SUPPORT
+  DEPENDS:=@PCI_SUPPORT +kmod-hwmon-core
   KCONFIG:= \
 	CONFIG_NVME_CORE \
 	CONFIG_BLK_DEV_NVME \
 	CONFIG_NVME_MULTIPATH=n \
-	CONFIG_NVME_HWMON=n
+	CONFIG_NVME_HWMON=y
   FILES:= \
 	$(LINUX_DIR)/drivers/nvme/host/nvme-core.ko \
 	$(LINUX_DIR)/drivers/nvme/host/nvme.ko
-  AUTOLOAD:=$(call AutoLoad,30,nvme-core nvme,1)
+  AUTOLOAD:=$(call AutoLoad,30,nvme-core nvme)
 endef
 
 define KernelPackage/nvme/description
@@ -525,9 +525,9 @@ define KernelPackage/scsi-core
 	CONFIG_BLK_DEV_SD
   FILES:= \
 	$(LINUX_DIR)/drivers/scsi/scsi_mod.ko \
-	$(LINUX_DIR)/drivers/scsi/scsi_common.ko \
+	$(LINUX_DIR)/drivers/scsi/scsi_common.ko@ge5.15 \
 	$(LINUX_DIR)/drivers/scsi/sd_mod.ko
-  AUTOLOAD:=$(call AutoLoad,40,scsi_mod scsi_common sd_mod,1)
+  AUTOLOAD:=$(call AutoLoad,40,scsi_mod scsi_common@ge5.15 sd_mod,1)
 endef
 
 $(eval $(call KernelPackage,scsi-core))

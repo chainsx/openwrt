@@ -116,7 +116,7 @@ define KernelPackage/hwmon-gsc
 	$(LINUX_DIR)/drivers/mfd/gateworks-gsc.ko \
 	$(LINUX_DIR)/drivers/hwmon/gsc-hwmon.ko
   AUTOLOAD:=$(call AutoLoad,20,gsc-hwmon,1)
-  $(call AddDepends/hwmon,+kmod-i2c-core)
+  $(call AddDepends/hwmon,@!LINUX_5_4 +kmod-i2c-core)
 endef
 
 define KernelPackage/hwmon-gsc/description
@@ -215,21 +215,6 @@ define KernelPackage/hwmon-it87/description
 endef
 
 $(eval $(call KernelPackage,hwmon-it87))
-
-
-define KernelPackage/hwmon-jc42
-  TITLE:=Jedec JC42.4 compliant temperature sensors support
-  KCONFIG:=CONFIG_SENSORS_JC42
-  FILES:=$(LINUX_DIR)/drivers/hwmon/jc42.ko
-  AUTOLOAD:=$(call AutoProbe,jc42)
-  $(call AddDepends/hwmon,+kmod-i2c-core +kmod-regmap-i2c)
-endef
-
-define KernelPackage/hwmon-jc42/description
- Kernel module for Jedec JC42.4 compliant temperature sensors
-endef
-
-$(eval $(call KernelPackage,hwmon-jc42))
 
 
 define KernelPackage/hwmon-lm63
@@ -384,21 +369,6 @@ endef
 $(eval $(call KernelPackage,hwmon-max6642))
 
 
-define KernelPackage/hwmon-max6697
-  TITLE:=MAX6697 monitoring support
-  KCONFIG:=CONFIG_SENSORS_MAX6697
-  FILES:=$(LINUX_DIR)/drivers/hwmon/max6697.ko
-  AUTOLOAD:=$(call AutoProbe,max6697)
-  $(call AddDepends/hwmon,+kmod-i2c-core)
-endef
-
-define KernelPackage/hwmon-max6697/description
- Kernel module for Maxim MAX6697 temperature monitor
-endef
-
-$(eval $(call KernelPackage,hwmon-max6697))
-
-
 define KernelPackage/hwmon-mcp3021
   TITLE:=MCP3021/3221 monitoring support
   KCONFIG:=CONFIG_SENSORS_MCP3021
@@ -417,11 +387,9 @@ $(eval $(call KernelPackage,hwmon-mcp3021))
 define KernelPackage/hwmon-nct6775
   TITLE:=NCT6106D/6775F/6776F/6779D/6791D/6792D/6793D and compatibles monitoring support
   KCONFIG:=CONFIG_SENSORS_NCT6775
-  FILES:= \
-	$(LINUX_DIR)/drivers/hwmon/nct6775.ko \
-	$(LINUX_DIR)/drivers/hwmon/nct6775-core.ko@ge5.19
+  FILES:=$(LINUX_DIR)/drivers/hwmon/nct6775.ko
   AUTOLOAD:=$(call AutoProbe,nct6775)
-  $(call AddDepends/hwmon,@PCI_SUPPORT @TARGET_x86 +kmod-hwmon-vid +LINUX_6_1:kmod-regmap-core)
+  $(call AddDepends/hwmon,@PCI_SUPPORT @TARGET_x86 +kmod-hwmon-vid)
 endef
 
 define KernelPackage/hwmon-nct6775/description
