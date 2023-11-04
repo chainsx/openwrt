@@ -1,262 +1,265 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"PO-Revision-Date: 2023-07-01 19:50+0000\n"
-"Last-Translator: ssantos <ssantos@web.de>\n"
-"Language-Team: Portuguese <https://hosted.weblate.org/projects/openwrt/"
-"luciapplicationsuhttpd/pt/>\n"
-"Language: pt\n"
+"PO-Revision-Date: 2023-08-31 08:31+0000\n"
+"Last-Translator: Charles03010 <charles03010@gmail.com>\n"
+"Language-Team: Indonesian <https://hosted.weblate.org/projects/openwrt/"
+"luciapplicationsuhttpd/id/>\n"
+"Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.0-dev\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.0.1-dev\n"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:135
 msgid ""
 "(/old/path=/new/path) or (just /old/path which becomes /cgi-prefix/old/path)"
 msgstr ""
-"(/old/path=/new/path) ou (just /old/path que se torna /cgi-prefix/old/path)"
+"(/old/path=/new/path) atau (hanya /old/path yang menjadi /cgi-prefix/old/"
+"path)"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:145
 msgid "404 Error"
-msgstr "Erro 404"
+msgstr "404 Kesalahan"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:7
 msgid "A lightweight single-threaded HTTP(S) server"
-msgstr "Um servidor HTTP(S) leve de thread única"
+msgstr "Server HTTP(S) utas tunggal yang ringan"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:20
 msgid "Advanced Settings"
-msgstr "Configurações avançadas"
+msgstr "Setelan Lanjutan"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:135
 msgid "Aliases"
-msgstr "Pseudônimos (Aliases)"
+msgstr "Alias"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:149
 msgid "Base directory for files to be served"
-msgstr "Diretório Base para publicar ficheiros"
+msgstr "Direktori dasar untuk file yang akan ditampilkan"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:22
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:50
 msgid "Bind to specific interface:port (by specifying interface address"
-msgstr ""
-"Escute em uma interface:porta específica (especificando o endereço da "
-"interface"
+msgstr "Ikat ke antarmuka tertentu:port (dengan menentukan alamat antarmuka"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:126
 msgid "CGI filetype handler"
-msgstr "Interpretador de tipo de ficheiro CGI"
+msgstr "Penangan tipe file CGI"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:153
 msgid "CGI is disabled if not present."
-msgstr "O CGI estará desativado se não presente."
+msgstr "CGI dinonaktifkan jika tidak ada."
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:142
 msgid "Config file (e.g. for credentials for Basic Auth)"
-msgstr "Ficheiro de configuração (ex: credenciais para autenticação básica)"
+msgstr "File konfigurasi (misalnya untuk kredensial untuk Auth Dasar)"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:187
 msgid "Connection reuse"
-msgstr "Reutilizar conexão"
+msgstr "Penggunaan kembali sambungan"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:229
 msgid "Country"
-msgstr "País"
+msgstr "Negara"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:173
 msgid "Disable JSON-RPC authorization via ubus session API"
-msgstr "Desativa a autorização JSON-RPC através da API de sessão ubus"
+msgstr "Nonaktifkan otorisasi JSON-RPC melalui API sesi ubus"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:129
 msgid "Do not follow symlinks outside document root"
-msgstr "Não siga ligações simbólicas (symlinks) para fora do documento raiz"
+msgstr "Jangan ikuti symlink di luar root dokumen"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:132
 msgid "Do not generate directory listings."
-msgstr "Não gere listagens de diretórios."
+msgstr "Jangan buat daftar direktori."
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:148
 msgid "Document root"
-msgstr "Documento Raiz"
+msgstr "Akar dokumen"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:122
 msgid "E.g specify with index.html and index.php when using PHP"
-msgstr "Ex: use index.html e index.php quando usar PHP"
+msgstr ""
+"Misalnya, tentukan dengan index.html dan index.php saat menggunakan PHP"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:160
 msgid "Embedded Lua interpreter is disabled if not present."
-msgstr "O interpretador Lua embutido será desativado se não presente."
+msgstr "Penerjemah Lua tertanam dinonaktifkan jika tidak ada."
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:169
 msgid "Enable JSON-RPC Cross-Origin Resource Support"
-msgstr "Ative o suporte para recursos JSON-RPC de origem cruzada"
+msgstr "Aktifkan Dukungan Sumber Daya Lintas Asal JSON-RPC"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:19
 msgid "For settings primarily geared to serving more than the web UI"
-msgstr "Para ajustes envolvidos com mais do que prover a interface web"
+msgstr "Untuk pengaturan terutama diarahkan untuk melayani lebih dari UI web"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:19
 msgid "Full Web Server Settings"
-msgstr "Configurações Completas do Servidor Web"
+msgstr "Pengaturan Server Web Lengkap"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:160
 msgid "Full real path to handler for Lua scripts"
-msgstr "Caminho completo para o interpretador de scripts Lua"
+msgstr "Jalur nyata penuh ke penangan untuk skrip Lua"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:18
 msgid "General Settings"
-msgstr "Configurações gerais"
+msgstr "Setelan Umum"
 
 #: applications/luci-app-uhttpd/root/usr/share/rpcd/acl.d/luci-app-uhttpd.json:3
 msgid "Grant UCI access for luci-app-uhttpd"
-msgstr "Conceder acesso UCI ao luci-app-uhttpd"
+msgstr "Berikan akses UCI untuk luci-app-uhttpd"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:22
 msgid "HTTP listeners (address:port)"
-msgstr "Escutas do HTTP (endereço:porta)"
+msgstr "Pendengar HTTP (alamat:port)"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:94
 msgid "HTTPS Certificate (DER or PEM format)"
-msgstr "Certificado HTTPS (formato DER ou PEM)"
+msgstr "Sertifikat HTTPS (format DER atau PEM)"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:96
 msgid "HTTPS Private Key (DER or PEM format)"
-msgstr "Chave privada de HTTPS (formato DER ou PEM)"
+msgstr "Kunci Pribadi HTTPS (format DER atau PEM)"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:50
 msgid "HTTPS listener (address:port)"
-msgstr "Escuta do HTTPS (endereço:porta)"
+msgstr "Pendengar HTTPS (alamat:port)"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:221
 msgid "If empty, a random/unique value is used in cert generation"
-msgstr "Se estiver vazio, um valor aleatório/único é usado na geração do cert"
+msgstr "Jika kosong, nilai acak/unik digunakan dalam pembuatan sertifikat"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:90
 msgid "Ignore private IPs on public interface"
-msgstr "Ignore endereços IP privados na interface pública"
+msgstr "Abaikan IP pribadi pada antarmuka publik"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:122
 msgid "Index page(s)"
-msgstr "Página(s) Índice(s)"
+msgstr "Halaman indeks"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:126
 msgid ""
 "Interpreter to associate with file endings ('suffix=handler', e.g. '.php=/"
 "usr/bin/php-cgi')"
 msgstr ""
-"Interpretador para associar com extensões de ficheiros "
-"('extensão=interpretador', ex: '.php=/usr/bin/php-cgi')"
+"Penerjemah untuk diasosiasikan dengan akhiran file ('suffix=penangan', "
+"misalnya '.php=/usr/bin/php-cgi')"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:214
 msgid "Length of key in bits"
-msgstr "Comprimento da chave em bits"
+msgstr "Panjang kunci dalam bit"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:223
 msgid "Location"
-msgstr "Localização"
+msgstr "Lokasi"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:197
 msgid "Maximum number of connections"
-msgstr "Número máximo de requisições para script"
+msgstr "Jumlah koneksi maksimum"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:201
 msgid "Maximum number of script requests"
-msgstr "Número máximo de requisições para script"
+msgstr "Jumlah maksimum permintaan skrip"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:177
 msgid "Maximum wait time for Lua, CGI, or ubus execution"
-msgstr "Tempo máximo de espera para execuções de Lua, CGI ou ubus"
+msgstr "Waktu tunggu maksimum untuk eksekusi Lua, CGI, atau ubus"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:182
 msgid "Maximum wait time for network activity"
-msgstr "Tempo máximo de espera para atividade na rede"
+msgstr "Waktu tunggu maksimum untuk aktivitas jaringan"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:221
 msgid "Organization"
-msgstr "Organização"
+msgstr "Organisasi"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:166
 msgid "Override path for ubus socket"
-msgstr "Sobrescrever o caminho do socket ubus"
+msgstr "Ganti jalur untuk soket ubus"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:153
 msgid "Path prefix for CGI scripts"
-msgstr "Prefixo do caminho para scripts CGI"
+msgstr "Awalan jalur untuk skrip CGI"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:90
 msgid ""
 "Prevent access from private (RFC1918) IPs on an interface if it has an "
 "public IP address"
 msgstr ""
-"Evite acesso de endereços privados (RFC1918) na interface que tem um "
-"endereço IP público"
+"Cegah akses dari IP pribadi (RFC1918) pada antarmuka jika memiliki alamat IP "
+"publik"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:138
 msgid "Realm for Basic Auth"
-msgstr "Reino para Autenticação Simples"
+msgstr "Ranah untuk Auth Dasar"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:86
 msgid "Redirect all HTTP to HTTPS"
-msgstr "Redirecionar todo tráfego HTTP para HTTPS"
+msgstr "Alihkan semua HTTP ke HTTPS"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:109
 msgid "Remove configuration for certificate and key"
-msgstr "Remove a configuração para o certificado e chave"
+msgstr "Hapus konfigurasi untuk sertifikat dan kunci"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:98
 msgid "Remove old certificate and key"
-msgstr "Remove os certificados e chaves antigas"
+msgstr "Hapus sertifikat dan kunci lama"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:218
 msgid "Server Hostname"
-msgstr "Nome do Servidor"
+msgstr "Nama Host Peladen"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:20
 msgid ""
 "Settings which are either rarely needed or which affect serving the WebUI"
-msgstr "Ajustes que são raramente usadas ou que afetam a interface web"
+msgstr ""
+"Pengaturan yang jarang diperlukan atau yang mempengaruhi penyajian WebUI"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:226
 msgid "State"
-msgstr "Estado"
+msgstr "Provinsi"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:192
 msgid "TCP Keepalive"
-msgstr "Manter conexões TCP abertas (Keepalive)"
+msgstr "TCP Keepalive"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:110
 msgid "This permanently deletes the cert, key, and configuration to use same."
-msgstr "Isto apaga permanentemente o certificado, a chave e a configuração."
+msgstr ""
+"Ini secara permanen menghapus sertifikat, kunci, dan konfigurasi untuk "
+"digunakan sama."
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:210
 msgid "Valid for # of Days"
-msgstr "Valido por # dias"
+msgstr "Berlaku untuk # Hari"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:145
 msgid ""
 "Virtual URL or CGI script to display on status '404 Not Found'. Must begin "
 "with '/'"
 msgstr ""
-"URL virtual ou script CGI para mostrar quando ocorrer erro '404 Não "
-"Encontrado'. Deve começar com '/'"
+"URL virtual atau skrip CGI untuk ditampilkan pada status '404 Tidak "
+"Ditemukan'. Harus dimulai dengan '/'"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:156
 msgid "Virtual path prefix for Lua scripts"
-msgstr "Prefixo do caminho virtual para scripts Lua"
+msgstr "Awalan jalur virtual untuk skrip Lua"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:163
 msgid "Virtual path prefix for ubus via JSON-RPC integration"
-msgstr "Prefixo do caminho virtual para o ubus através da integração JSON-RPC"
+msgstr "Awalan jalur virtual untuk ubus melalui integrasi JSON-RPC"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:142
 msgid "Will not use HTTP authentication if not present"
-msgstr "Não usar autenticação HTTP se não presente"
+msgstr "Tidak akan menggunakan otentikasi HTTP jika tidak ada"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:218
 msgid "a.k.a CommonName"
-msgstr "também conhecido como Nome Comum"
+msgstr "alias NamaUmum"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:6
 #: applications/luci-app-uhttpd/root/usr/share/luci/menu.d/luci-app-uhttpd.json:3
@@ -265,16 +268,16 @@ msgstr "uHTTPd"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:205
 msgid "uHTTPd Self-signed Certificate Parameters"
-msgstr "Parâmetros do Certificado Auto-assinado do uHTTPd"
+msgstr "Parameter Sertifikat yang Ditandatangani uHTTPd Sendiri"
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:99
 msgid ""
 "uHTTPd will generate a new self-signed certificate using the configuration "
 "shown below."
 msgstr ""
-"o uHTTPd gerará um certificado auto-assinado usando a configuração mostrada "
-"abaixo."
+"uHTTPd akan membuat sertifikat baru yang ditandatangani sendiri menggunakan "
+"konfigurasi yang ditunjukkan di bawah ini."
 
 #: applications/luci-app-uhttpd/luasrc/model/cbi/uhttpd/uhttpd.lua:163
 msgid "ubus integration is disabled if not present"
-msgstr "A integração com o ubus será desativada se não presente"
+msgstr "integrasi ubus dinonaktifkan jika tidak ada"
