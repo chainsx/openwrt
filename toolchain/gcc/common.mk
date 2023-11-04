@@ -23,29 +23,29 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=gcc
 GCC_VERSION:=$(call qstrip,$(CONFIG_GCC_VERSION))
 PKG_VERSION:=$(firstword $(subst +, ,$(GCC_VERSION)))
-GCC_MAJOR_VERSION:=$(word 1,$(subst ., ,$(PKG_VERSION)))
 GCC_DIR:=$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+PKG_CPE_ID:=cpe:/a:gnu:gcc
+
+ifeq ($(PKG_VERSION),7.5.0)
+  PKG_HASH:=b81946e7f01f90528a1f7352ab08cc602b9ccc05d4e44da4bd501c5a189ee661
+endif
 
 ifeq ($(PKG_VERSION),8.4.0)
   PKG_HASH:=e30a6e52d10e1f27ed55104ad233c30bd1e99cfb5ff98ab022dc941edd1b2dd4
 endif
 
-ifeq ($(PKG_VERSION),11.3.0)
-  PKG_HASH:=b47cf2818691f5b1e21df2bb38c795fac2cfbd640ede2d0a5e1c89e338a3ac39
+ifeq ($(PKG_VERSION),9.3.0)
+  PKG_HASH:=71e197867611f6054aa1119b13a0c0abac12834765fe2d81f35ac57f84f742d1
 endif
 
-ifeq ($(PKG_VERSION),12.3.0)
-  PKG_HASH:=949a5d4f99e786421a93b532b22ffab5578de7321369975b91aec97adfda8c3b
+ifeq ($(PKG_VERSION),10.2.0)
+  PKG_HASH:=b8dd4368bb9c7f0b98188317ee0254dd8cc99d1e3a18d0ff146c855fe16c1d8c
 endif
 
-ifeq ($(PKG_VERSION),13.2.0)
-  PKG_HASH:=e275e76442a6067341a27f04c5c6b83d8613144004c0413528863dc6b5c743da
-endif
-
-PATCH_DIR=../patches-$(GCC_MAJOR_VERSION).x
+PATCH_DIR=../patches/$(GCC_VERSION)
 
 BUGURL=http://bugs.openwrt.org/
 PKGVERSION=OpenWrt GCC $(PKG_VERSION) $(REVISION)
@@ -80,7 +80,7 @@ ifdef CONFIG_INSTALL_GCCGO
 endif
 
 ifdef CONFIG_GCC_USE_GRAPHITE
-  GRAPHITE_CONFIGURE:= --with-isl=$(STAGING_DIR_HOST)
+  GRAPHITE_CONFIGURE:= --with-isl=$(TOPDIR)/staging_dir/host
 else
   GRAPHITE_CONFIGURE:= --without-isl --without-cloog
 endif
@@ -113,14 +113,13 @@ GCC_CONFIGURE:= \
 		$(if $(CONFIG_mips64)$(CONFIG_mips64el),--with-arch=mips64 \
 			--with-abi=$(call qstrip,$(CONFIG_MIPS64_ABI))) \
 		$(if $(CONFIG_arc),--with-cpu=$(CONFIG_CPU_TYPE)) \
-		$(if $(CONFIG_powerpc64), $(if $(CONFIG_USE_MUSL),--with-abi=elfv2)) \
-		--with-gmp=$(STAGING_DIR_HOST) \
-		--with-mpfr=$(STAGING_DIR_HOST) \
-		--with-mpc=$(STAGING_DIR_HOST) \
+		--with-gmp=$(TOPDIR)/staging_dir/host \
+		--with-mpfr=$(TOPDIR)/staging_dir/host \
+		--with-mpc=$(TOPDIR)/staging_dir/host \
 		--disable-decimal-float \
 		--with-diagnostics-color=auto-if-env \
 		--enable-__cxa_atexit \
-		--enable-libstdcxx-dual-abi \
+		--disable-libstdcxx-dual-abi \
 		--with-default-libstdcxx-abi=new
 ifneq ($(CONFIG_mips)$(CONFIG_mipsel),)
   GCC_CONFIGURE += --with-mips-plt
@@ -185,12 +184,6 @@ define Host/SetToolchainInfo
 	$(SED) 's,GCC_VERSION=.*,GCC_VERSION=$(GCC_VERSION),' $(TOOLCHAIN_DIR)/info.mk
 endef
 
-ifeq ($(GCC_MAJOR_VERSION),12)
-	GCC_VERSION_FILE:=gcc/genversion.cc
-else
-	GCC_VERSION_FILE:=gcc/version.c
-endif
-
 ifneq ($(GCC_PREPARE),)
   define Host/Prepare
 	$(call Host/SetToolchainInfo)
@@ -199,7 +192,8 @@ ifneq ($(GCC_PREPARE),)
 	$(CP) $(SCRIPT_DIR)/config.{guess,sub} $(HOST_SOURCE_DIR)/
 	$(SED) 's,^MULTILIB_OSDIRNAMES,# MULTILIB_OSDIRNAMES,' $(HOST_SOURCE_DIR)/gcc/config/*/t-*
 	$(SED) 'd' $(HOST_SOURCE_DIR)/gcc/DEV-PHASE
-	$(SED) 's, DATESTAMP,,' $(HOST_SOURCE_DIR)/$(GCC_VERSION_FILE)
+	$(SED) 's, DATESTAMP,,' $(HOST_SOURCE_DIR)/gcc/version.c
+	#(cd $(HOST_SOURCE_DIR)/libstdc++-v3; autoconf;);
 	$(SED) 's,gcc_no_link=yes,gcc_no_link=no,' $(HOST_SOURCE_DIR)/libstdc++-v3/configure
 	mkdir -p $(GCC_BUILD_DIR)
   endef
