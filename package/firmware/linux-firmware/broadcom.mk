@@ -139,6 +139,16 @@ define Package/station-m2-firmware/install
 endef
 $(eval $(call BuildPackage,station-m2-firmware))
 
+Package/firefly-rk3399-firmware = $(call Package/firmware-default,Broadcom FullMac SDIO firmware)
+define Package/firefly-rk3399-firmware/install
+	$(INSTALL_DIR) $(1)/lib/firmware/brcm
+	$(INSTALL_DATA) ./brcm_firmware/ap6255/BCM4345C0.hcd $(1)/lib/firmware/brcm/BCM4345C0.hcd
+	$(INSTALL_DATA) ./brcm_firmware/ap6255/brcmfmac43455-sdio.clm_blob $(1)/lib/firmware/brcm/brcmfmac43455-sdio.clm_blob
+	$(INSTALL_DATA) ./brcm_firmware/ap6255/brcmfmac43455-sdio.bin $(1)/lib/firmware/brcm/brcmfmac43455-sdio.firefly,firefly-rk3399.bin
+	$(INSTALL_DATA) ./brcm_firmware/ap6255/brcmfmac43455-sdio.txt $(1)/lib/firmware/brcm/brcmfmac43455-sdio.firefly,firefly-rk3399.txt
+endef
+$(eval $(call BuildPackage,firefly-rk3399-firmware))
+
 Package/panther-x2-firmware = $(call Package/firmware-default,Broadcom FullMac SDIO firmware)
 define Package/panther-x2-firmware/install
 	$(INSTALL_DIR) $(1)/lib/firmware/brcm

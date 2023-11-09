@@ -231,6 +231,17 @@ define Device/radxa_rock-pi-4
 endef
 TARGET_DEVICES += radxa_rock-pi-4
 
+define Device/firefly_rk3399
+  DEVICE_VENDOR := Firefly
+  DEVICE_MODEL := Firefly RK3399
+  SOC := rk3399
+  SUPPORTED_DEVICES := firefly,firefly-rk3399
+  UBOOT_DEVICE_NAME := firefly-rk3399
+  IMAGE/sysupgrade.img.gz := boot-common | boot-script | pine64-img | gzip | append-metadata
+  DEVICE_PACKAGES := -urngd kmod-brcmfmac cypress-firmware-4356-sdio firefly-rk3399-firmware wpad-openssl
+endef
+TARGET_DEVICES += firefly_rk3399
+
 define Device/wesine_tpm312
   DEVICE_VENDOR := Wesine
   DEVICE_MODEL := TPM312

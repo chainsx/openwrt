@@ -115,6 +115,16 @@ define U-Boot/rock-pi-4-rk3399
   ATF:=rk3399_bl31.elf
 endef
 
+define U-Boot/firefly-rk3399
+  BUILD_SUBTARGET:=armv8
+  NAME:=Firefly RK3399
+  BUILD_DEVICES:= \
+    firefly_rk3399
+  DEPENDS:=+PACKAGE_u-boot-firefly-rk3399:arm-trusted-firmware-rockchip
+  PKG_BUILD_DEPENDS:=arm-trusted-firmware-rockchip
+  ATF:=rk3399_bl31.elf
+endef
+
 define U-Boot/rockpro64-rk3399
   BUILD_SUBTARGET:=armv8
   NAME:=RockPro64
@@ -291,6 +301,7 @@ UBOOT_TARGETS := \
   nanopi-r4se-rk3399 \
   nanopi-r5s-rk3568 \
   rock-pi-4-rk3399 \
+  firefly-rk3399 \
   rockpro64-rk3399 \
   rongpin-king3399-rk3399 \
   rocktech-mpc1903-rk3399 \
