@@ -176,7 +176,7 @@ define Device/firefly_station-m2
   DEVICE_DTS := rockchip/rk3566-roc-pc
   UBOOT_DEVICE_NAME := station-m2-rk3566
   IMAGE/sysupgrade.img.gz := boot-common | boot-script nanopi-r5s | pine64-img | gzip | append-metadata
-  DEVICE_PACKAGES := kmod-brcmfmac kmod-ikconfig kmod-ata-ahci-platform station-m2-firmware wpad-openssl
+  DEVICE_PACKAGES := -urngd kmod-brcmfmac cypress-firmware-43455-sdio station-m2-firmware wpad-openssl
 endef
 TARGET_DEVICES += firefly_station-m2
 
@@ -238,7 +238,7 @@ define Device/firefly_rk3399
   SUPPORTED_DEVICES := firefly,firefly-rk3399
   UBOOT_DEVICE_NAME := firefly-rk3399
   IMAGE/sysupgrade.img.gz := boot-common | boot-script | pine64-img | gzip | append-metadata
-  DEVICE_PACKAGES := -urngd kmod-brcmfmac cypress-firmware-4356-sdio firefly-rk3399-firmware wpad-openssl
+  DEVICE_PACKAGES := -urngd kmod-brcmfmac cypress-firmware-43455-sdio firefly-rk3399-firmware wpad-openssl
 endef
 TARGET_DEVICES += firefly_rk3399
 
