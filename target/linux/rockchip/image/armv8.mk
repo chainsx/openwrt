@@ -237,6 +237,7 @@ define Device/firefly_rk3399
   SOC := rk3399
   SUPPORTED_DEVICES := firefly,firefly-rk3399
   UBOOT_DEVICE_NAME := firefly-rk3399
+  DEVICE_DTS := rockchip/rk3399-firefly
   IMAGE/sysupgrade.img.gz := boot-common | boot-script | pine64-img | gzip | append-metadata
   DEVICE_PACKAGES := -urngd kmod-brcmfmac kmod-ikconfig kmod-ata-ahci-platform firefly-rk3399-firmware wpad-openssl
 endef
