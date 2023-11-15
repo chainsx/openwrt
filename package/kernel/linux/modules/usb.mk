@@ -331,17 +331,6 @@ define KernelPackage/usb-bcma
 endef
 $(eval $(call KernelPackage,usb-bcma))
 
-define KernelPackage/usb-fotg210
-  TITLE:=Support for FOTG210 USB host controllers
-  DEPENDS:=@USB_SUPPORT @TARGET_gemini
-  KCONFIG:=CONFIG_USB_FOTG210_HCD
-  FILES:= \
-	$(if $(CONFIG_USB_FOTG210_HCD),$(LINUX_DIR)/drivers/usb/host/fotg210-hcd.ko)
-  AUTOLOAD:=$(call AutoLoad,50,fotg210-hcd,1)
-  $(call AddDepends/usb)
-endef
-$(eval $(call KernelPackage,usb-fotg210))
-
 define KernelPackage/usb-ssb
   TITLE:=Support for SSB USB controllers
   DEPENDS:=@USB_SUPPORT @TARGET_bcm47xx
@@ -494,7 +483,7 @@ $(eval $(call KernelPackage,usb-dwc3))
 
 define KernelPackage/usb-dwc3-qcom
   TITLE:=DWC3 Qualcomm USB driver
-  DEPENDS:=@(TARGET_ipq40xx||TARGET_ipq806x||TARGET_ipq807x||TARGET_ipq60xx) +kmod-usb-dwc3
+  DEPENDS:=@(TARGET_ipq40xx||TARGET_ipq806x||TARGET_qualcommax) +kmod-usb-dwc3
   KCONFIG:= CONFIG_USB_DWC3_QCOM
   FILES:= $(LINUX_DIR)/drivers/usb/dwc3/dwc3-qcom.ko
   AUTOLOAD:=$(call AutoLoad,53,dwc3-qcom,1)
@@ -761,8 +750,9 @@ $(eval $(call KernelPackage,usb-serial-mct))
 
 define KernelPackage/usb-serial-mos7720
   TITLE:=Support for Moschip MOS7720 devices
-  KCONFIG:=CONFIG_USB_SERIAL_MOS7720
+  KCONFIG:=CONFIG_USB_SERIAL_MOS7720 CONFIG_USB_SERIAL_MOS7715_PARPORT=y
   FILES:=$(LINUX_DIR)/drivers/usb/serial/mos7720.ko
+  DEPENDS:=+kmod-ppdev
   AUTOLOAD:=$(call AutoProbe,mos7720)
   $(call AddDepends/usb-serial)
 endef
@@ -1139,6 +1129,7 @@ endef
 
 define KernelPackage/usb-net-aqc111
   TITLE:=Support for USB-to-Ethernet Aquantia AQtion 5/2.5GbE
+  DEPENDS:=+kmod-libphy
   KCONFIG:=CONFIG_USB_NET_AQC111
   FILES:=$(LINUX_DIR)/drivers/$(USBNET_DIR)/aqc111.ko
   AUTOLOAD:=$(call AutoProbe,aqc111)
@@ -1154,9 +1145,9 @@ $(eval $(call KernelPackage,usb-net-aqc111))
 
 define KernelPackage/usb-net-asix
   TITLE:=Kernel module for USB-to-Ethernet Asix convertors
-  DEPENDS:=+kmod-phy-ax88796b +LINUX_6_1:kmod-phylink \
-	+(LINUX_5_15||LINUX_6_1):kmod-mdio-devres \
-	+(LINUX_5_15||LINUX_6_1):kmod-net-selftests
+  DEPENDS:= \
+	+kmod-libphy +kmod-net-selftests +kmod-mdio-devres +kmod-phy-ax88796b \
+	+LINUX_6_1:kmod-phylink
   KCONFIG:=CONFIG_USB_NET_AX8817X
   FILES:=$(LINUX_DIR)/drivers/$(USBNET_DIR)/asix.ko
   AUTOLOAD:=$(call AutoProbe,asix)
@@ -1268,7 +1259,7 @@ $(eval $(call KernelPackage,usb-net-mcs7830))
 
 define KernelPackage/usb-net-smsc75xx
   TITLE:=SMSC LAN75XX based USB 2.0 Gigabit ethernet devices
-  DEPENDS:=+!LINUX_5_4:kmod-libphy
+  DEPENDS:=+kmod-libphy
   KCONFIG:=CONFIG_USB_NET_SMSC75XX
   FILES:=$(LINUX_DIR)/drivers/$(USBNET_DIR)/smsc75xx.ko
   AUTOLOAD:=$(call AutoProbe,smsc75xx)
@@ -1284,7 +1275,7 @@ $(eval $(call KernelPackage,usb-net-smsc75xx))
 
 define KernelPackage/usb-net-smsc95xx
   TITLE:=SMSC LAN95XX based USB 2.0 10/100 ethernet devices
-  DEPENDS:=+kmod-phy-smsc +LINUX_6_1:kmod-net-selftests
+  DEPENDS:=+kmod-libphy +kmod-phy-smsc +LINUX_6_1:kmod-net-selftests
   KCONFIG:=CONFIG_USB_NET_SMSC95XX
   FILES:=$(LINUX_DIR)/drivers/$(USBNET_DIR)/smsc95xx.ko
   AUTOLOAD:=$(call AutoProbe,smsc95xx)
@@ -1395,7 +1386,7 @@ define KernelPackage/usb-net-rtl8152
   KCONFIG:=CONFIG_USB_RTL8152
   FILES:=$(LINUX_DIR)/drivers/$(USBNET_DIR)/r8152.ko
   AUTOLOAD:=$(call AutoProbe,r8152)
-  $(call AddDepends/usb-net, +LINUX_5_10:kmod-crypto-hash)
+  $(call AddDepends/usb-net)
 endef
 
 define KernelPackage/usb-net-rtl8152/description
@@ -1457,7 +1448,7 @@ define KernelPackage/usb-net-cdc-ncm
   KCONFIG:=CONFIG_USB_NET_CDC_NCM
   FILES:= $(LINUX_DIR)/drivers/$(USBNET_DIR)/cdc_ncm.ko
   AUTOLOAD:=$(call AutoProbe,cdc_ncm)
-  $(call AddDepends/usb-net,+!LINUX_5_4:kmod-usb-net-cdc-ether)
+  $(call AddDepends/usb-net,+kmod-usb-net-cdc-ether)
 endef
 
 define KernelPackage/usb-net-cdc-ncm/description
@@ -1824,9 +1815,8 @@ define KernelPackage/usb-xhci-mtk
   KCONFIG:=CONFIG_USB_XHCI_MTK
   HIDDEN:=1
   FILES:= \
-	 $(LINUX_DIR)/drivers/usb/host/xhci-mtk.ko@lt5.13 \
-	 $(LINUX_DIR)/drivers/usb/host/xhci-mtk-hcd.ko@ge5.13
-  AUTOLOAD:=$(call AutoLoad,54,xhci-mtk@lt5.13 xhci-mtk-hcd@gt5.13,1)
+	 $(LINUX_DIR)/drivers/usb/host/xhci-mtk-hcd.ko
+  AUTOLOAD:=$(call AutoLoad,54,xhci-mtk-hcd,1)
   $(call AddDepends/usb)
 endef
 

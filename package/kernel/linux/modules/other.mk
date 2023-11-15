@@ -30,9 +30,7 @@ $(eval $(call KernelPackage,6lowpan))
 define KernelPackage/bluetooth
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Bluetooth support
-  DEPENDS:=@USB_SUPPORT +kmod-crypto-cmac +kmod-crypto-ecb \
-	+kmod-crypto-ecdh +kmod-crypto-hash +kmod-hid +kmod-lib-crc16 \
-	+kmod-regmap-core +kmod-serdev +kmod-usb-core
+  DEPENDS:=@USB_SUPPORT +kmod-usb-core +kmod-crypto-hash +kmod-crypto-ecb +kmod-lib-crc16 +kmod-hid +kmod-crypto-cmac +kmod-regmap-core +kmod-crypto-ecdh
   KCONFIG:= \
 	CONFIG_BT \
 	CONFIG_BT_BREDR=y \
@@ -41,16 +39,14 @@ define KernelPackage/bluetooth
 	CONFIG_BT_RFCOMM \
 	CONFIG_BT_BNEP \
 	CONFIG_BT_HCIBTUSB \
-	CONFIG_BT_HCIBTUSB_BCM=y \
+	CONFIG_BT_HCIBTUSB_BCM=n \
 	CONFIG_BT_HCIBTUSB_MTK=y \
 	CONFIG_BT_HCIBTUSB_RTL=y \
 	CONFIG_BT_HCIUART \
-	CONFIG_BT_HCIUART_BCM=y \
+	CONFIG_BT_HCIUART_BCM=n \
 	CONFIG_BT_HCIUART_INTEL=n \
 	CONFIG_BT_HCIUART_H4 \
 	CONFIG_BT_HCIUART_NOKIA=n \
-	CONFIG_BT_HCIUART_QCA=y \
-	CONFIG_BT_HCIUART_SERDEV=y \
 	CONFIG_BT_HIDP
   $(call AddDepends/rfkill)
   FILES:= \
@@ -60,10 +56,8 @@ define KernelPackage/bluetooth
 	$(LINUX_DIR)/net/bluetooth/hidp/hidp.ko \
 	$(LINUX_DIR)/drivers/bluetooth/hci_uart.ko \
 	$(LINUX_DIR)/drivers/bluetooth/btusb.ko \
-	$(LINUX_DIR)/drivers/bluetooth/btbcm.ko \
-	$(LINUX_DIR)/drivers/bluetooth/btqca.ko \
-	$(LINUX_DIR)/drivers/bluetooth/btrtl.ko \
 	$(LINUX_DIR)/drivers/bluetooth/btintel.ko \
+	$(LINUX_DIR)/drivers/bluetooth/btrtl.ko \
 	$(LINUX_DIR)/drivers/bluetooth/btmtk.ko@ge5.17
   AUTOLOAD:=$(call AutoProbe,bluetooth rfcomm bnep hidp hci_uart btusb)
 endef
@@ -206,6 +200,32 @@ define KernelPackage/eeprom-at25/description
 endef
 
 $(eval $(call KernelPackage,eeprom-at25))
+
+
+define KernelPackage/google-firmware
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=Google firmware drivers (Coreboot, VPD, Memconsole)
+  KCONFIG:= \
+	CONFIG_GOOGLE_FIRMWARE=y \
+	CONFIG_GOOGLE_COREBOOT_TABLE \
+	CONFIG_GOOGLE_MEMCONSOLE \
+	CONFIG_GOOGLE_MEMCONSOLE_COREBOOT \
+	CONFIG_GOOGLE_VPD
+  FILES:= \
+	  $(LINUX_DIR)/drivers/firmware/google/coreboot_table.ko \
+	  $(LINUX_DIR)/drivers/firmware/google/memconsole.ko \
+	  $(LINUX_DIR)/drivers/firmware/google/memconsole-coreboot.ko \
+	  $(LINUX_DIR)/drivers/firmware/google/vpd-sysfs.ko
+  AUTOLOAD:=$(call AutoProbe,coreboot_table memconsole-coreboot vpd-sysfs)
+endef
+
+define KernelPackage/google-firmware/description
+  Kernel modules for Google firmware drivers. Useful for examining firmware and
+  boot details on devices using a Google bootloader based on Coreboot. Provides
+  files like /sys/firmware/log and /sys/firmware/vpd.
+endef
+
+$(eval $(call KernelPackage,google-firmware))
 
 
 define KernelPackage/gpio-f7188x
@@ -472,35 +492,17 @@ endef
 $(eval $(call KernelPackage,sdhci))
 
 
-define KernelPackage/serdev
-  SUBMENU:=$(OTHER_MENU)
-  TITLE:=Serial device bus support
-  KCONFIG:=CONFIG_SERIAL_DEV_BUS
-  FILES:= \
-	$(LINUX_DIR)/drivers/tty/serdev/serdev.ko
-  AUTOLOAD:=$(call AutoProbe,serdev)
-endef
-
-define KernelPackage/serdev/description
- Kernel support for devices connected via a serial port
-endef
-
-$(eval $(call KernelPackage,serdev))
-
-
 define KernelPackage/rfkill
   SUBMENU:=$(OTHER_MENU)
   TITLE:=RF switch subsystem support
   DEPENDS:=@USE_RFKILL +kmod-input-core
   KCONFIG:= \
     CONFIG_RFKILL_FULL \
-    CONFIG_RFKILL_GPIO=y \
     CONFIG_RFKILL_INPUT=y \
     CONFIG_RFKILL_LEDS=y
   FILES:= \
-    $(LINUX_DIR)/net/rfkill/rfkill.ko \
-    $(LINUX_DIR)/net/rfkill/rfkill-gpio.ko
-  AUTOLOAD:=$(call AutoLoad,20,rfkill-gpio)
+    $(LINUX_DIR)/net/rfkill/rfkill.ko
+  AUTOLOAD:=$(call AutoLoad,20,rfkill)
 endef
 
 define KernelPackage/rfkill/description
@@ -726,6 +728,22 @@ endef
 
 $(eval $(call KernelPackage,rtc-pcf2127))
 
+define KernelPackage/rtc-r7301
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=Epson RTC7301 support
+  DEFAULT:=m if ALL_KMODS && RTC_SUPPORT
+  DEPENDS:=+kmod-regmap-mmio
+  KCONFIG:=CONFIG_RTC_DRV_R7301 \
+	CONFIG_RTC_CLASS=y
+  FILES:=$(LINUX_DIR)/drivers/rtc/rtc-r7301.ko
+  AUTOLOAD:=$(call AutoProbe,rtc-r7301)
+endef
+
+define KernelPackage/rtc-r7301/description
+ Kernel module for Epson RTC7301 RTC chip
+endef
+
+$(eval $(call KernelPackage,rtc-r7301))
 
 define KernelPackage/rtc-rs5c372a
   SUBMENU:=$(OTHER_MENU)
@@ -778,6 +796,22 @@ endef
 
 $(eval $(call KernelPackage,rtc-s35390a))
 
+define KernelPackage/rtc-x1205
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=Xicor Intersil X1205
+  DEFAULT:=m if ALL_KMODS && RTC_SUPPORT
+  DEPENDS:=+kmod-i2c-core
+  KCONFIG:=CONFIG_RTC_DRV_X1205 \
+	CONFIG_RTC_CLASS=y
+  FILES:=$(LINUX_DIR)/drivers/rtc/rtc-x1205.ko
+  AUTOLOAD:=$(call AutoProbe,rtc-x1205)
+endef
+
+define KernelPackage/rtc-x1205/description
+ Kernel module for Xicor Intersil X1205 I2C RTC chip
+endef
+
+$(eval $(call KernelPackage,rtc-x1205))
 
 define KernelPackage/mtdtests
   SUBMENU:=$(OTHER_MENU)
@@ -829,6 +863,24 @@ define KernelPackage/mtdram/description
 endef
 
 $(eval $(call KernelPackage,mtdram))
+
+
+define KernelPackage/ramoops
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=Ramoops (pstore-ram)
+  DEFAULT:=m if ALL_KMODS
+  KCONFIG:=CONFIG_PSTORE_RAM \
+	CONFIG_PSTORE_CONSOLE=y
+  DEPENDS:=+kmod-pstore +kmod-reed-solomon
+  FILES:= $(LINUX_DIR)/fs/pstore/ramoops.ko
+  AUTOLOAD:=$(call AutoLoad,30,ramoops,1)
+endef
+
+define KernelPackage/ramoops/description
+ Kernel module for pstore-ram (ramoops) crash log storage
+endef
+
+$(eval $(call KernelPackage,ramoops))
 
 
 define KernelPackage/reed-solomon
@@ -994,31 +1046,33 @@ define KernelPackage/zram/description
 endef
 
 define KernelPackage/zram/config
-  choice
-    prompt "ZRAM Default compressor"
-    default ZRAM_DEF_COMP_LZORLE
+  if PACKAGE_kmod-zram
+    choice
+      prompt "ZRAM Default compressor"
+      default ZRAM_DEF_COMP_LZORLE
 
-  config ZRAM_DEF_COMP_LZORLE
+    config ZRAM_DEF_COMP_LZORLE
             bool "lzo-rle"
             select PACKAGE_kmod-lib-lzo
 
-  config ZRAM_DEF_COMP_LZO
+    config ZRAM_DEF_COMP_LZO
             bool "lzo"
             select PACKAGE_kmod-lib-lzo
 
-  config ZRAM_DEF_COMP_LZ4
+    config ZRAM_DEF_COMP_LZ4
             bool "lz4"
             select PACKAGE_kmod-lib-lz4
 
-  config ZRAM_DEF_COMP_LZ4HC
+    config ZRAM_DEF_COMP_LZ4HC
             bool "lz4-hc"
             select PACKAGE_kmod-lib-lz4hc
 
-  config ZRAM_DEF_COMP_ZSTD
+    config ZRAM_DEF_COMP_ZSTD
             bool "zstd"
             select PACKAGE_kmod-lib-zstd
 
-  endchoice
+    endchoice
+  endif
 endef
 
 $(eval $(call KernelPackage,zram))
@@ -1214,9 +1268,7 @@ define KernelPackage/keys-trusted
   TITLE:=TPM trusted keys on kernel keyring
   DEPENDS:=@KERNEL_KEYS +kmod-crypto-hash +kmod-crypto-hmac +kmod-crypto-sha1 +kmod-tpm
   KCONFIG:=CONFIG_TRUSTED_KEYS
-  FILES:= \
-	$(LINUX_DIR)/security/keys/trusted.ko@lt5.10 \
-	$(LINUX_DIR)/security/keys/trusted-keys/trusted.ko@ge5.10
+  FILES:= $(LINUX_DIR)/security/keys/trusted-keys/trusted.ko
   AUTOLOAD:=$(call AutoLoad,01,trusted-keys,1)
 endef
 
@@ -1316,27 +1368,9 @@ endef
 $(eval $(call KernelPackage,i6300esb-wdt))
 
 
-define KernelPackage/itco-wdt
-  SUBMENU:=$(OTHER_MENU)
-  TITLE:=Intel iTCO Watchdog Timer
-  KCONFIG:=CONFIG_ITCO_WDT \
-	   CONFIG_ITCO_VENDOR_SUPPORT=y
-  FILES:=$(LINUX_DIR)/drivers/$(WATCHDOG_DIR)/iTCO_wdt.ko \
-	 $(LINUX_DIR)/drivers/$(WATCHDOG_DIR)/iTCO_vendor_support.ko
-  AUTOLOAD:=$(call AutoLoad,50,iTCO_vendor_support iTCO_wdt,1)
-endef
-
-define KernelPackage/itco-wdt/description
-  Kernel module for Intel iTCO Watchdog Timer
-endef
-
-$(eval $(call KernelPackage,itco-wdt))
-
-
 define KernelPackage/mhi-bus
   SUBMENU:=$(OTHER_MENU)
   TITLE:=MHI bus
-  DEPENDS:=@(LINUX_5_15||LINUX_6_1)
   KCONFIG:=CONFIG_MHI_BUS \
            CONFIG_MHI_BUS_DEBUG=y
   FILES:=$(LINUX_DIR)/drivers/bus/mhi/host/mhi.ko
