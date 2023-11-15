@@ -12,6 +12,12 @@
 1. **不要用 root 用户进行编译**
 2. 默认登陆IP 192.168.1.1 密码 password
 
+## 损坏的包
+
+```
+pdnsd-alt 1.2.9b-par
+```
+
 ## 编译命令
 
 1. 首先装好 Linux 系统，推荐 Debian 11 或 Ubuntu LTS

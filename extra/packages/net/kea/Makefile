@@ -9,12 +9,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=kea
-PKG_VERSION:=1.8.0
-PKG_RELEASE:=2
+PKG_VERSION:=1.8.2
+PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://ftp.isc.org/isc/kea/$(PKG_VERSION)
-PKG_HASH:=3d91106fba3698194fb80da4149af709c7b2e89881311522816e561fca0ec0ea
+PKG_HASH:=486ca7abedb9d6fdf8e4344ad8688d1171f2ef0f5506d118988aadeae80a1d39
 
 PKG_MAINTAINER:=BangLang Huang<banglang.huang@foxmail.com>, Rosy Song<rosysong@rosinson.com>
 PKG_LICENSE:=MPL-2.0
@@ -39,6 +39,14 @@ define Package/kea/Default
   URL:=https://www.isc.org/kea
 endef
 
+define Package/kea/conffiles
+/etc/kea/
+endef
+
+Package/kea-ctrl/conffiles = $(Package/kea/conffiles)
+Package/kea-dhcp4/conffiles = $(Package/kea/conffiles)
+Package/kea-dhcp6/conffiles = $(Package/kea/conffiles)
+Package/kea-dhcp-ddns/conffiles = $(Package/kea/conffiles)
 
 ###### *************************************************************************
 define Package/kea
@@ -120,6 +128,26 @@ define Package/kea-admin/description
 checking versions, upgrading etc.).
 endef
 
+###### *************************************************************************
+define Package/kea-hook-ha
+	$(call Package/kea/Default)
+	TITLE+=High Availability hook library
+	DEPENDS:=+kea-libs +kea-hook-lease-cmds
+endef
+define Package/kea-hook-ha/description
+	The high availability hook library.
+endef
+
+###### *************************************************************************
+define Package/kea-hook-lease-cmds
+	$(call Package/kea/Default)
+	TITLE+=Lease Commands hook library
+	DEPENDS:=+kea-libs
+endef
+define Package/kea-hook-lease-cmds/description
+	The lease commands hook library.
+endef
+
 ##### *************************************************************************
 define Package/kea-lfc
 	$(call Package/kea/Default)
@@ -152,6 +180,17 @@ endef
 define Package/kea-shell/description
      This simple text client uses the REST interface to connect to the Kea
 Control Agent.
+endef
+
+###### *************************************************************************
+define Package/kea-uci
+	$(call Package/kea/Default)
+	TITLE+=UCI support
+	DEPENDS:=@(PACKAGE_kea-ctrl||PACKAGE_kea-dhcp4||PACKAGE_kea-dhcp6||PACKAGE_kea-dhcp-ddns)
+endef
+define Package/kea-uci/description
+	Kea PROCD/UCI support. This package installs a UCI config file and
+	a PROCD service file.
 endef
 
 ###### *************************************************************************
@@ -235,6 +274,16 @@ define Package/kea-admin/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/kea-admin $(1)/usr/sbin/kea-admin
 endef
 
+define Package/kea-hook-ha/install
+	$(INSTALL_DIR) $(1)/usr/lib/kea/hooks
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/kea/hooks/libdhcp_ha.so $(1)/usr/lib/kea/hooks
+endef
+
+define Package/kea-hook-lease-cmds/install
+	$(INSTALL_DIR) $(1)/usr/lib/kea/hooks
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/kea/hooks/libdhcp_lease_cmds.so $(1)/usr/lib/kea/hooks
+endef
+
 define Package/kea-ctrl/install
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/kea
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/keactrl $(1)/usr/sbin/keactrl
@@ -258,6 +307,16 @@ define Package/kea-shell/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/kea-shell $(1)/usr/sbin/kea-shell
 endef
 
+define Package/kea-uci/install
+	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/init.d
+	$(INSTALL_CONF) ./files/kea.config $(1)/etc/config/kea
+	$(INSTALL_BIN) ./files/kea.init $(1)/etc/init.d/kea
+endef
+
+define Package/kea-uci/conffiles
+/etc/config/kea
+endef
+
 $(eval $(call HostBuild))
 $(eval $(call BuildPackage,kea-libs))
 $(eval $(call BuildPackage,kea-ctrl))
@@ -265,6 +324,9 @@ $(eval $(call BuildPackage,kea-dhcp4))
 $(eval $(call BuildPackage,kea-dhcp6))
 $(eval $(call BuildPackage,kea-dhcp-ddns))
 $(eval $(call BuildPackage,kea-admin))
+$(eval $(call BuildPackage,kea-hook-ha))
+$(eval $(call BuildPackage,kea-hook-lease-cmds))
 $(eval $(call BuildPackage,kea-lfc))
 $(eval $(call BuildPackage,kea-perfdhcp))
 $(eval $(call BuildPackage,kea-shell))
+$(eval $(call BuildPackage,kea-uci))
