@@ -1,14 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ksmbd
-PKG_VERSION:=3.4.5
-PKG_RELEASE:=$(AUTORELEASE)
+PKG_VERSION:=3.4.7
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/cifsd-team/cifsd/tar.gz/$(PKG_VERSION)?
-PKG_HASH:=2873c8ba1027fc5b04c5f5344804ef1469ad7019a033456c16ca4aa3f2c161f0
+PKG_SOURCE_URL:=https://github.com/cifsd-team/ksmbd/releases/download/$(PKG_VERSION)
+PKG_HASH:=ed9ecb2232046054bf0c1fef41690890f99d93b1d72b7e7d158746ac9be18c7f
 
-PKG_MAINTAINER:=Andy Walsh <andy.walsh44+github@gmail.com>
 PKG_LICENSE:=GPL-2.0-or-later
 PKG_LICENSE_FILES:=COPYING
 
@@ -24,7 +23,6 @@ define KernelPackage/fs-ksmbd
 	URL:=https://github.com/cifsd-team/cifsd
 	FILES:=$(PKG_BUILD_DIR)/ksmbd.ko
 	DEPENDS:= \
-		+kmod-asn1-decoder \
 		+kmod-nls-base \
 		+kmod-nls-utf8 \
 		+kmod-crypto-md4 \
@@ -38,10 +36,11 @@ define KernelPackage/fs-ksmbd
 		+kmod-crypto-aead \
 		+kmod-crypto-ccm \
 		+kmod-crypto-gcm \
-		+kmod-fs-nfsd
+		+kmod-asn1-decoder \
+		+kmod-oid-registry
 endef
 
-# The last DEPENDS entry is a hack in order to get CONFIG_OID_REGISTRY
+# The last two DEPENDS are hacks in order to get CONFIG_ASN1 and CONFIG_OID_REGISTRY
 # which it seems can't be selected independently. Some bug in either base or upstream.
 
 define KernelPackage/fs-ksmbd/description
