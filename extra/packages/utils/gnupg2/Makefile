@@ -8,15 +8,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gnupg
-PKG_VERSION:=2.2.23
-PKG_RELEASE:=2
+PKG_VERSION:=2.2.39
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=https://gnupg.org/ftp/gcrypt/gnupg
-PKG_HASH:=10b55e49d78b3e49f1edb58d7541ecbdad92ddaeeb885b6f486ed23d1cd1da5c
+PKG_HASH:=ab74db6685f026d7c0a10b527ecddecd608606a1691d15fda5d0a7f7d27e4c2f
 
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=COPYING COPYING.CC0 COPYING.GPL2 COPYING.LGPL21 COPYING.LGPL3 COPYING.other
+PKG_CPE_ID:=cpe:/a:gnupg:gnupg
 
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
@@ -103,7 +104,7 @@ CONFIGURE_ARGS += \
 	--disable-tests \
 	--disable-zip
 
-TARGET_CFLAGS += $(if $(CONFIG_GCC_USE_VERSION_10),-DEXTERN_UNLESS_MAIN_MODULE=static)
+TARGET_CFLAGS += $(if $(filter-out 5 6 7 8 9,$(word 1,$(subst ., ,$(call qstrip,$(CONFIG_GCC_VERSION))))),-DEXTERN_UNLESS_MAIN_MODULE=static)
 
 define Package/gnupg2/install
 	$(INSTALL_DIR) $(1)/usr/bin
