@@ -16,6 +16,8 @@
 
 ```
 pdnsd-alt 1.2.9b-par
+kmod-rtl8812au-ct
+...
 ```
 
 ## 编译命令
