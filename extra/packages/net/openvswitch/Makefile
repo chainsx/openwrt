@@ -20,15 +20,15 @@ PKG_VERSION:=$(ovs_version)
 PKG_RELEASE:=3
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://www.openvswitch.org/releases/
-PKG_HASH:=4171e52a8c0ffe160c1daa6687219d902a2a6969b296d223d8dac980ab99a260
+PKG_HASH:=e03bfab7ca82d81a7d3a36de4f390a3b5210e3f39657671f922877cd4ea6dc73
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
 PKG_CPE_ID:=cpe:/a:openvswitch:openvswitch
 
 PKG_BUILD_DIR:=$(ovs_builddir)
-PKG_BUILD_DEPENDS+=python3/host python-six/host
-PKG_USE_MIPS16:=0
+PKG_BUILD_DEPENDS+=python3/host
+PKG_BUILD_FLAGS:=no-mips16 lto
 PKG_BUILD_PARALLEL:=1
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
@@ -40,6 +40,9 @@ include $(INCLUDE_DIR)/package.mk
 include ../../lang/python/python3-host.mk
 include ../../lang/python/python3-package.mk
 
+define Package/openvswitch/config
+source "$(SOURCE)/Config.in"
+endef
 
 ovs_kmod_packages:=
 ovs_kmod_intree_kernel_patchver_min:=3.10
@@ -73,6 +76,7 @@ ovs_kmod_openvswitch_title:=Open vSwitch kernel datapath (upstream)
 ovs_kmod_openvswitch_kconfig:=CONFIG_OPENVSWITCH
 ovs_kmod_openvswitch_depends:=\
 	  +kmod-lib-crc32c \
+	  +kmod-mpls \
 	  +kmod-nf-nat \
 	  +IPV6:kmod-nf-nat6 \
 	  +kmod-nf-conntrack \
@@ -150,46 +154,48 @@ $(eval $(call OvsKmodPackageTemplate,openvswitch-lisp-intree))
 #
 ovs_libopenvswitch_title:=Open vSwitch (libopenvswitch.so)
 ovs_libopenvswitch_hidden:=1
-ovs_libopenvswitch_depends:=+libopenssl +libunbound +!(arc||arceb):libunwind
-ovs_libopenvswitch_depends+=+libatomic
+ovs_libopenvswitch_depends:= \
+	+libatomic +libopenssl +OPENVSWITCH_WITH_LIBUNBOUND:libunbound \
+	+!(arc||arceb):libunwind
 ovs_libopenvswitch_files:=usr/lib/libopenvswitch*.so*
 $(eval $(call OvsPackageTemplate,libopenvswitch))
 
 
 ovs_libofproto_title:=Open vSwitch (libofproto.so libsflow.so)
 ovs_libofproto_hidden:=1
-ovs_libofproto_depends+=+libatomic
+ovs_libofproto_depends:= +libatomic
 ovs_libofproto_files:=usr/lib/libofproto*.so* usr/lib/libsflow*.so*
 $(eval $(call OvsPackageTemplate,libofproto))
 
 
 ovs_libovsdb_title:=Open vSwitch (libovsdb.so)
 ovs_libovsdb_hidden:=1
-ovs_libovsdb_depends+=+libatomic
+ovs_libovsdb_depends:= +libatomic
 ovs_libovsdb_files:=usr/lib/libovsdb*.so*
 $(eval $(call OvsPackageTemplate,libovsdb))
 
 
 ovs_vswitchd_title:=Open vSwitch (ovs-vswitchd)
 ovs_vswitchd_hidden:=1
-ovs_vswitchd_depends:=+openvswitch-libopenvswitch +openvswitch-libofproto
-ovs_vswitchd_depends+=+libatomic
+ovs_vswitchd_depends:= \
+	+libatomic +openvswitch-libofproto +openvswitch-libopenvswitch
 ovs_vswitchd_files:=usr/sbin/ovs-vswitchd
 $(eval $(call OvsPackageTemplate,vswitchd))
 
 
 ovs_ovsdb_title:=Open vSwitch (ovsdb-server)
 ovs_ovsdb_hidden:=1
-ovs_ovsdb_depends:=+openvswitch-libopenvswitch +openvswitch-libovsdb
-ovs_ovsdb_depends+=+libatomic
+ovs_ovsdb_depends:= \
+	+libatomic +openvswitch-libopenvswitch +openvswitch-libovsdb
 ovs_ovsdb_files:=usr/sbin/ovsdb-server
 $(eval $(call OvsPackageTemplate,ovsdb))
 
 
 ovs_common_title:=Open vSwitch (common files)
 ovs_common_hidden:=1
-ovs_common_depends:=+openvswitch-libopenvswitch +openvswitch-libofproto +openvswitch-libovsdb
-ovs_common_depends+=+libatomic
+ovs_common_depends:= \
+	+libatomic +openvswitch-libofproto +openvswitch-libopenvswitch \
+	+openvswitch-libovsdb
 ovs_common_files:= \
 	usr/share/openvswitch/scripts/ovs-lib \
 	usr/share/openvswitch/scripts/ovs-ctl \
@@ -219,16 +225,16 @@ $(eval $(call OvsPackageTemplate,common))
 # uuidgen is required for generating system-id
 ovs_openvswitch_title:=Open vSwitch
 ovs_openvswitch_hidden:=
-ovs_openvswitch_depends:=+coreutils +coreutils-sleep +uuidgen \
-	+openvswitch-common +openvswitch-vswitchd +openvswitch-ovsdb +kmod-openvswitch
-ovs_openvswitch_depends+=+libatomic
+ovs_openvswitch_depends:= \
+	+coreutils +coreutils-sleep +kmod-openvswitch +libatomic +openvswitch-common \
+	+openvswitch-ovsdb +openvswitch-vswitchd +uuidgen
 ovs_openvswitch_files:= usr/share/openvswitch/vswitch.ovsschema
 $(eval $(call OvsPackageTemplate,openvswitch))
 
 
 ovs_python3_title:=Open vSwitch (Python3 library)
 ovs_python3_hidden:=
-ovs_python3_depends:=+PACKAGE_openvswitch-python3:python3 +PACKAGE_openvswitch-python3:python3-six
+ovs_python3_depends:=+PACKAGE_openvswitch-python3:python3
 define ovs_python3_install
 	$$(INSTALL_DIR) $$(1)$$(PYTHON3_PKG_DIR)
 	$$(CP) $$(PKG_INSTALL_DIR)/usr/share/openvswitch/python/ovs $$(1)$$(PYTHON3_PKG_DIR)
@@ -243,7 +249,9 @@ CONFIGURE_ARGS+= \
 	--disable-silent-rules \
 
 CONFIGURE_VARS += \
+	$(if $(CONFIG_OPENVSWITCH_WITH_LIBUNBOUND),,ac_cv_lib_unbound_ub_ctx_create=no) \
 	ovs_cv_flake8=no \
+	ovs_cv_groff=no \
 	ovs_cv_python3=$(PYTHON3) \
 	ovs_cv_python3_host=$(HOST_PYTHON3_BIN) \
 	SPHINXBUILD=none \
@@ -260,7 +268,7 @@ ifneq ($(ovs_intree_kmod_enabled),)
   endif
 endif
 
-TARGET_CFLAGS += -flto -std=gnu99
+TARGET_CFLAGS += -std=gnu99
 MAKE_VARS += PYTHONPATH="$(HOST_PYTHON3PATH)"
 
 export OVS_KERNEL_MAKE_FLAGS=$(KERNEL_MAKE_FLAGS)

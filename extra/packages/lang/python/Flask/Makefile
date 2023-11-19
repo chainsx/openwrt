@@ -5,13 +5,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=Flask
-PKG_VERSION:=2.0.1
-PKG_RELEASE:=1
+PKG_VERSION:=2.0.2
+PKG_RELEASE:=6
 
 PYPI_NAME:=$(PKG_NAME)
-PKG_HASH:=1c4c257b1892aec1398784c63791cbaa43062f1f7aeb555c4da961b20ee68f55
+PKG_HASH:=7b2fb8e934ddd50731893bdcdb00fc8c0315916f9fcd50d22c7cc1a95ab634e2
 
-PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
+PKG_MAINTAINER:=Michal Vasilek <michal.vasilek@nic.cz>
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE.rst
 PKG_CPE_ID:=cpe:/a:palletsprojects:flask

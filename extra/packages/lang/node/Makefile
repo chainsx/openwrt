@@ -6,25 +6,28 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=node
 
-ifeq ($(CONFIG_NODEJS_16),y)
-PKG_VERSION:=v16.20.2
+ifeq ($(CONFIG_NODEJS_21),y)
+PKG_VERSION:=v21.1.0
 PKG_RELEASE:=1
-PKG_HASH:=576f1a03c455e491a8d132b587eb6b3b84651fc8974bb3638433dd44d22c8f49
-PATCH_DIR:=./patches/v16.x
-NODEJS_BIN_SUM:=874463523f26ed528634580247f403d200ba17a31adf2de98a7b124c6eb33d87
+PKG_HASH:=91ac72e4444c5e5ab4b448030a61ffa95acd35d34a9d31d2d220ee2bed01b925
+PATCH_DIR:=./patches/v21.x
+NODEJS_BIN_SUM:=6a1020b5605ba4b4a89b08147e5fd124bd9d1fd5bfe5301fe0567af67bf0e335
+NODE_MODULE_VERSION:=120
 else
-ifeq ($(CONFIG_NODEJS_20),y)
-PKG_VERSION:=v20.8.1
-PKG_RELEASE:=1
-PKG_HASH:=f799c66f6a6386bb8ac2c75a378f740c455e97f1fe964393dd39c9f9f6efbc70
-PATCH_DIR:=./patches/v20.x
-NODEJS_BIN_SUM:=44096f6276cf735f3b25f47ffaaa1629b0abad4d9932c3a77d9dcdc743a3ff92
-else
+ifeq ($(CONFIG_NODEJS_18),y)
 PKG_VERSION:=v18.18.2
 PKG_RELEASE:=1
 PKG_HASH:=7249e2f0af943ec38599504f4b2a2bd31fb938787291b6ccca6c8badf01e3b56
 PATCH_DIR:=./patches/v18.x
 NODEJS_BIN_SUM:=75aba25ae76999309fc6c598efe56ce53fbfc221381a44a840864276264ab8ac
+NODE_MODULE_VERSION:=108
+else
+PKG_VERSION:=v20.9.0
+PKG_RELEASE:=1
+PKG_HASH:=a23d96810abf0455426b349d47ce5310f33095b7bc0571b9cc510f481c3a4519
+PATCH_DIR:=./patches/v20.x
+NODEJS_BIN_SUM:=9033989810bf86220ae46b1381bdcdc6c83a0294869ba2ad39e1061f1e69217a
+NODE_MODULE_VERSION:=115
 endif
 endif
 
@@ -43,7 +46,6 @@ HOST_BUILD_PARALLEL:=1
 PKG_BUILD_DEPENDS:=python3/host
 PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
-PKG_USE_MIPS16:=0
 PKG_ASLR_PIE:=0
 
 include $(INCLUDE_DIR)/host-build.mk
@@ -55,9 +57,10 @@ define Package/node
   SUBMENU:=Node.js
   TITLE:=Node.js is a platform built on Chrome's JavaScript runtime
   URL:=https://nodejs.org/
-  DEPENDS:=@HAS_FPU @(i386||x86_64||arm||aarch64||mipsel) \
+  DEPENDS:=@HAS_FPU @(i386||x86_64||arm||aarch64) \
 	   +libstdcpp +libopenssl +zlib +libnghttp2 \
-	   +libatomic +NODEJS_ICU_SYSTEM:icu +NODEJS_ICU_SYSTEM:icu-full-data
+	   +libcares +libatomic +NODEJS_ICU_SYSTEM:icu +NODEJS_ICU_SYSTEM:icu-full-data
+  ABI_VERSION:=$(NODE_MODULE_VERSION)
 endef
 
 define Package/node/description
@@ -66,7 +69,7 @@ define Package/node/description
    package ecosystem, npm, is the largest ecosystem of open source libraries in the world.
 
   *** The following preparations must be made on the host side. ***
-      1. gcc 8.3 or higher is required.
+      1. gcc 10.1 or higher is required.
       2. To build a 32-bit target, gcc-multilib, g++-multilib are required.
       3. Requires libatomic package. (If necessary, install the 32-bit library at the same time.)
      ex) sudo apt-get install gcc-multilib g++-multilib
@@ -90,19 +93,19 @@ define Package/node/config
 
 	choice
 		prompt "Version Selection"
-		default NODEJS_16
+		default NODEJS_18
 		help
 		 Select node.js version.
 		 The host package version is also the same.
 
-		config NODEJS_16
-			bool "16.x End-of-Life"
-
 		config NODEJS_18
-			bool "18.x Active LTS"
+			bool "18.x Maintenance LTS"
 
 		config NODEJS_20
-			bool "20.x Current"
+			bool "20.x Active LTS"
+
+		config NODEJS_21
+			bool "21.x Current"
 	endchoice
 
 	if PACKAGE_node
@@ -138,7 +141,8 @@ define Package/node/config
 		  If not set, uses './tmp'
 
 	config NODEJS_HOST_BIN
-		bool "LINUX ONLY: Install the official nodejs binary package as HOSTPKG (experimental)"
+		bool "Install the official nodejs binary package as HOSTPKG (experimental)"
+		depends on HOST_OS_LINUX
 		help
 		  Reduce build time for the host package.
 
@@ -172,6 +176,7 @@ CONFIGURE_ARGS:= \
 	--shared-zlib \
 	--shared-openssl \
 	--shared-nghttp2 \
+	--shared-cares \
 	--with-intl=$(if $(CONFIG_NODEJS_ICU_SMALL),small-icu,$(if $(CONFIG_NODEJS_ICU_SYSTEM),system-icu,none)) \
 	$(if $(findstring +neon",$(CONFIG_CPU_TYPE)),--with-arm-fpu=neon) \
 	$(if $(findstring +neon-vfpv4",$(CONFIG_CPU_TYPE)),--with-arm-fpu=neon) \
@@ -216,12 +221,6 @@ rm -rf /usr/lib/node_modules/npm || true
 endef
 
 ifeq ($(CONFIG_NODEJS_HOST_BIN),y)
-  ifeq ($(HOST_OS),Linux)
-	USE_NODEJS_HOST_BIN:=y
-  endif
-endif
-
-ifeq ($(USE_NODEJS_HOST_BIN),y)
 
 NODEJS_BIN:=node-$(PKG_VERSION)-linux-x64.tar.xz
 

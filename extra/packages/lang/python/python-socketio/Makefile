@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-socketio
-PKG_VERSION:=5.1.0
+PKG_VERSION:=5.8.0
 PKG_RELEASE:=1
 
 PYPI_NAME:=python-socketio
-PKG_HASH:=338cc29abb6f3ca14c88f1f8d05ed27c690df4648f62062b299f92625bbf7093
+PKG_HASH:=e714f4dddfaaa0cb0e37a1e2deef2bb60590a5b9fea9c343dd8ca5e688416fd9
 
-PKG_MAINTAINER:=Jan Pavlinec <jan.pavlinec@nic.cz>
+PKG_MAINTAINER:=Jan Pavlinec <jan.pavlinec1@gmail.com>
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
 
@@ -34,7 +34,7 @@ define Package/python3-socketio
 	+python3-engineio \
 	+python3-asyncio \
 	+python3-logging \
-	+python3-urllib
+	+python3-uuid
 endef
 
 define Package/python3-socketio/description

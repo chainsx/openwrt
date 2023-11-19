@@ -15,7 +15,7 @@ PKG_SOURCE_URL:=https://mirrors.tencent.com/npm/$(PKG_NPM_NAME)/-/ \
 PKG_HASH:=f6d25a51db50c252b3d3775bf9df26e510ec0a9e17215362a7f6c95dea15caff
 
 PKG_BUILD_DEPENDS:=node/host
-PKG_USE_MIPS16:=0
+PKG_BUILD_FLAGS:=no-mips16
 
 PKG_MAINTAINER:=Hirokazu MORIKAWA <morikw2@gmail.com>
 PKG_LICENSE:=ISC Apache-2.0

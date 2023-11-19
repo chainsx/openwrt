@@ -6,7 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=php
-PKG_VERSION:=8.0.30
+PKG_VERSION:=8.2.12
 PKG_RELEASE:=1
 
 PKG_MAINTAINER:=Michael Heimpold <mhei@heimpold.de>
@@ -16,10 +16,10 @@ PKG_CPE_ID:=cpe:/a:php:php
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=http://www.php.net/distributions/
-PKG_HASH:=216ab305737a5d392107112d618a755dc5df42058226f1670e9db90e77d777d9
+PKG_HASH:=e1526e400bce9f9f9f774603cfac6b72b5e8f89fa66971ebc3cc4e5964083132
 
 PKG_BUILD_PARALLEL:=1
-PKG_USE_MIPS16:=0
+PKG_BUILD_FLAGS:=no-mips16
 
 PHP8_MODULES= \
 	bcmath \
@@ -33,14 +33,14 @@ PHP8_MODULES= \
 	mbstring mysqli mysqlnd \
 	opcache openssl \
 	pcntl pdo pdo-mysql pdo-pgsql pdo-sqlite pgsql phar \
-	session shmop simplexml snmp soap sockets sqlite3 sysvmsg sysvsem sysvshm \
+	session shmop simplexml snmp soap sockets sodium sqlite3 sysvmsg sysvsem sysvshm \
 	tokenizer \
 	xml xmlreader xmlwriter \
 	zip
 
 PKG_CONFIG_DEPENDS:= \
 	$(patsubst %,CONFIG_PACKAGE_php8-mod-%,$(PHP8_MODULES)) \
-	CONFIG_PHP8_LIBXML CONFIG_PHP8_SYSTEMTZDATA
+	CONFIG_PHP8_LIBXML CONFIG_PHP8_SYSTEMTZDATA CONFIG_PACKAGE_apache-mod-php8
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
@@ -66,7 +66,7 @@ define Package/php8/config
 
 	config PHP8_SYSTEMTZDATA
 		bool "Use system timezone data instead of php's built-in database"
-		depends on PACKAGE_php8-cli || PACKAGE_php8-cgi
+		depends on PACKAGE_php8-cli || PACKAGE_php8-cgi || PACKAGE_apache-mod-php8
 		default y
 		help
 			Enabling this feature automatically selects the zoneinfo-core package
@@ -94,7 +94,7 @@ endef
 
 define Package/php8-cli
   $(call Package/php8/Default)
-  DEPENDS+= +PACKAGE_php8-mod-intl:libstdcpp
+  DEPENDS+= +PACKAGE_php8-mod-intl:libstdcpp +riscv64:libatomic
   TITLE+= (CLI)
 endef
 
@@ -105,7 +105,7 @@ endef
 
 define Package/php8-cgi
   $(call Package/php8/Default)
-  DEPENDS+= +PACKAGE_php8-mod-intl:libstdcpp
+  DEPENDS+= +PACKAGE_php8-mod-intl:libstdcpp +riscv64:libatomic
   TITLE+= (CGI & FastCGI)
 endef
 
@@ -127,7 +127,7 @@ endef
 
 define Package/php8-fpm
   $(call Package/php8/Default)
-  DEPENDS+= +PACKAGE_php8-mod-intl:libstdcpp
+  DEPENDS+= +PACKAGE_php8-mod-intl:libstdcpp +riscv64:libatomic
   TITLE+= (FPM)
 endef
 
@@ -150,6 +150,23 @@ define Package/php8-mod-intl/description
   However, the data is required to make the ICU library useful - and thus
   directly affects PHPs ICU extension, too - so consider to also
   select/install package 'icu-full-data'.
+endef
+
+define Package/apache-mod-php8
+  $(call Package/php8/Default)
+  SUBMENU:=Web Servers/Proxies
+  SECTION:=net
+  CATEGORY:=Network
+  DEPENDS+=PACKAGE_apache-mod-php8:apache \
+	   +PACKAGE_php8-mod-intl:libstdcpp \
+	   +riscv64:libatomic \
+	   +libpcre2 +zlib
+  TITLE:=PHP8 module for Apache Web Server
+endef
+
+define Package/apache-mod-php8/description
+  $(call Package/php8/Default/description)
+  This package contains the PHP module for the Apache Web Server.
 endef
 
 # not everything groks --disable-nls
@@ -177,6 +194,12 @@ CONFIGURE_ARGS+= \
 
 ifeq ($(CONFIG_LIBC_USE_GLIBC),y)
 TARGET_LDFLAGS += -ldl
+endif
+ifeq ($(CONFIG_USE_MUSL),y)
+TARGET_CFLAGS += -D_LARGEFILE64_SOURCE
+endif
+ifneq ($(findstring riscv64,$(CONFIG_ARCH)),)
+TARGET_LDFLAGS += -latomic
 endif
 
 ifneq ($(SDK)$(CONFIG_PACKAGE_php8-mod-bcmath),)
@@ -254,7 +277,13 @@ else
 endif
 
 ifneq ($(SDK)$(CONFIG_PACKAGE_php8-mod-iconv),)
-  CONFIGURE_ARGS+= --with-iconv=shared,"$(ICONV_PREFIX)"
+  ifeq ($(CONFIG_BUILD_NLS),y)
+    CONFIGURE_VARS+= iconv_impl_name="gnu_libiconv"
+    CONFIGURE_ARGS+= --with-iconv=shared,"$(ICONV_PREFIX)"
+  else
+    CONFIGURE_VARS+= ac_cv_func_iconv=yes
+    CONFIGURE_ARGS+= --with-iconv=shared
+  endif
 else
   CONFIGURE_ARGS+= --without-iconv
 endif
@@ -393,6 +422,12 @@ else
   CONFIGURE_ARGS+= --disable-sockets
 endif
 
+ifneq ($(SDK)$(CONFIG_PACKAGE_php8-mod-sodium),)
+  CONFIGURE_ARGS+= --with-sodium=shared,"$(STAGING_DIR)/usr"
+else
+  CONFIGURE_ARGS+= --without-sodium
+endif
+
 ifneq ($(SDK)$(CONFIG_PACKAGE_php8-mod-sqlite3),)
   CONFIGURE_ARGS+= --with-sqlite3=shared
 else
@@ -462,16 +497,16 @@ else
   CONFIGURE_ARGS+= --without-system-tzdata
 endif
 
+ifneq ($(CONFIG_PACKAGE_apache-mod-php8),)
+  CONFIGURE_ARGS+= --with-apxs2=$(STAGING_DIR)/usr/bin/apxs
+endif
+
 CONFIGURE_VARS+= \
 	ac_cv_c_bigendian_php=$(if $(CONFIG_BIG_ENDIAN),yes,no) \
 	php_cv_cc_rpath="no" \
-	iconv_impl_name="gnu_libiconv" \
 	ac_cv_php_xml2_config_path="$(STAGING_DIR)/host/bin/xml2-config" \
 	ac_cv_u8t_decompose=yes \
 	ac_cv_have_pcre2_jit=no
-
-MAKE_VARS+= \
-	HOSTCC="$(HOSTCC)"
 
 define Package/php8/conffiles
 /etc/php.ini
@@ -531,6 +566,11 @@ define Package/php8-fpm/conffiles
 /etc/config/php8-fpm
 endef
 
+define Package/apache-mod-php8/install
+	$(INSTALL_DIR) $(1)/usr/lib/apache2
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/libs/libphp.so $(1)/usr/lib/apache2
+endef
+
 define Build/Prepare
 	$(call Build/Prepare/Default)
 	$(if $(QUILT),,( cd $(PKG_BUILD_DIR); touch configure.ac; ./buildconf --force ))
@@ -567,6 +607,8 @@ define BuildModule
   define Package/php8-mod-$(1)
     $(call Package/php8/Default)
 
+    DEPENDS+=+riscv64:libatomic
+
     ifneq ($(3),)
       DEPENDS+=$(3)
     endif
@@ -594,6 +636,7 @@ $(eval $(call BuildPackage,php8-cgi))
 $(eval $(call BuildPackage,php8-cli))
 $(eval $(call BuildPackage,php8-fastcgi))
 $(eval $(call BuildPackage,php8-fpm))
+$(eval $(call BuildPackage,apache-mod-php8))
 
 #$(eval $(call BuildModule,NAME,TITLE[,PKG DEPENDS]))
 $(eval $(call BuildModule,bcmath,Bcmath))
@@ -630,6 +673,7 @@ $(eval $(call BuildModule,simplexml,SimpleXML,+@PHP8_LIBXML +PACKAGE_php8-mod-si
 $(eval $(call BuildModule,snmp,SNMP,+PACKAGE_php8-mod-snmp:libnetsnmp +PACKAGE_php8-mod-snmp:libopenssl))
 $(eval $(call BuildModule,soap,SOAP,+@PHP8_LIBXML +PACKAGE_php8-mod-soap:libxml2))
 $(eval $(call BuildModule,sockets,Sockets))
+$(eval $(call BuildModule,sodium,Sodium,+PACKAGE_php8-mod-sodium:libsodium,30))
 $(eval $(call BuildModule,sqlite3,SQLite3,+PACKAGE_php8-mod-sqlite3:libsqlite3))
 $(eval $(call BuildModule,sysvmsg,System V messages))
 $(eval $(call BuildModule,sysvsem,System V shared memory))

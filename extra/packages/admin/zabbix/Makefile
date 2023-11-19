@@ -8,12 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=zabbix
-PKG_VERSION:=5.0.7
-PKG_RELEASE:=2
+PKG_VERSION:=6.4.7
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://cdn.zabbix.com/zabbix/sources/stable/5.0/
-PKG_HASH:=d762f8a9aa9e8717d2e85d2a82d27316ea5c2b214eb00aff41b6e9b06107916a
+PKG_SOURCE_URL:=https://cdn.zabbix.com/zabbix/sources/stable/$(basename $(PKG_VERSION))/ \
+	https://cdn.zabbix.com/zabbix/sources/oldstable/$(basename $(PKG_VERSION))/
+PKG_HASH:=6b4e81f07de4c82c7994871bea51be4d6427683fa9a7fbe112fd7559b3670e49
 
 PKG_MAINTAINER:=Etienne CHAMPETIER <champetier.etienne@gmail.com>
 PKG_LICENSE:=GPL-2.0
@@ -25,12 +26,13 @@ PKG_BUILD_PARALLEL:=1
 
 PKG_CONFIG_DEPENDS:= \
   CONFIG_ZABBIX_MYSQL \
-  CONFIG_ZABBIX_POSTGRESQL
+  CONFIG_ZABBIX_POSTGRESQL \
+  CONFIG_ZABBIX_SQLITE
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 
-define Package/zabbix-server/config
+define Package/zabbix-proxy/config
 comment "Database Software"
 
 choice
@@ -43,6 +45,8 @@ choice
         config ZABBIX_POSTGRESQL
                 bool "PostgreSQL"
 
+        config ZABBIX_SQLITE
+                bool "SQLite"
 endchoice
 endef
 
@@ -53,12 +57,13 @@ define Package/zabbix/Default
   TITLE:=Zabbix
   URL:=https://www.zabbix.com/
   USERID:=zabbix=53:zabbix=53
-  DEPENDS+=$(ICONV_DEPENDS) +libpcre +zlib
+  DEPENDS+=$(ICONV_DEPENDS) +libpcre2 +zlib
 endef
 
 define Package/zabbix-agentd
   $(call Package/zabbix/Default)
   TITLE+= agentd
+  DEPENDS+= +libevent2-pthreads
   PROVIDES:=zabbix-agentd
   VARIANT:=nossl
   DEFAULT_VARIANT:=1
@@ -67,7 +72,7 @@ endef
 define Package/zabbix-agentd-openssl
   $(call Package/zabbix/Default)
   TITLE+= agentd (with OpenSSL)
-  DEPENDS+= +libopenssl
+  DEPENDS+= +libopenssl +libevent2-pthreads
   PROVIDES:=zabbix-agentd
   VARIANT:=openssl
 endef
@@ -75,7 +80,7 @@ endef
 define Package/zabbix-agentd-gnutls
   $(call Package/zabbix/Default)
   TITLE+= agentd (with GnuTLS)
-  DEPENDS+= +libgnutls
+  DEPENDS+= +libgnutls +libevent2-pthreads
   PROVIDES:=zabbix-agentd
   VARIANT:=gnutls
 endef
@@ -149,7 +154,12 @@ endef
 define Package/zabbix-server/Default
   $(call Package/zabbix/Default)
   TITLE+= server
-  DEPENDS += +ZABBIX_POSTGRESQL:libpq +ZABBIX_MYSQL:libmariadbclient +libevent2
+  DEPENDS += +ZABBIX_POSTGRESQL:libpq \
+    +ZABBIX_MYSQL:libmariadbclient \
+    @(!ZABBIX_SQLITE) \
+    +libevent2 \
+    +libevent2-pthreads \
+    +fping
 endef
 
 define Package/zabbix-server
@@ -178,15 +188,31 @@ endef
 define Package/zabbix-server-frontend
   $(call Package/zabbix/Default)
   TITLE+= server-frontend
-  DEPENDS += +php7 +php7-cgi +ZABBIX_POSTGRESQL:php7-mod-pgsql +ZABBIX_MYSQL:php7-mod-mysqli \
-  +php7-mod-gd +php7-mod-bcmath +php7-mod-ctype +php7-mod-xmlreader +php7-mod-xmlwriter \
-  +php7-mod-session +php7-mod-sockets +php7-mod-mbstring +php7-mod-gettext
+  DEPENDS += +php8 \
+    +php8-cgi \
+    +php8-mod-gd \
+    +php8-mod-bcmath \
+    +php8-mod-ctype \
+    +php8-mod-xmlreader \
+    +php8-mod-xmlwriter \
+    +php8-mod-session \
+    +php8-mod-sockets \
+    +php8-mod-mbstring \
+    +php8-mod-gettext \
+    +ZABBIX_POSTGRESQL:php8-mod-pgsql \
+    +ZABBIX_MYSQL:php8-mod-mysqli \
+    @(!ZABBIX_SQLITE)
 endef
 
 define Package/zabbix-proxy/Default
   $(call Package/zabbix/Default)
   TITLE+= proxy
-  DEPENDS += +ZABBIX_POSTGRESQL:libpq +ZABBIX_MYSQL:libmariadbclient +libevent2
+  DEPENDS += +ZABBIX_POSTGRESQL:libpq \
+    +ZABBIX_MYSQL:libmariadbclient \
+    +ZABBIX_SQLITE:libsqlite3 \
+    +libevent2 \
+    +libevent2-pthreads \
+    +fping
 endef
 
 define Package/zabbix-proxy
@@ -232,14 +258,15 @@ endef
 
 CONFIGURE_ARGS+= \
 	--enable-agent \
-	--enable-server \
+	$(if $(CONFIG_ZABBIX_SQLITE),--disable-server,--enable-server) \
 	--enable-proxy \
 	$(call autoconf_bool,CONFIG_IPV6,ipv6) \
 	--disable-java \
 	$(if $(CONFIG_ZABBIX_MYSQL),--with-mysql) \
 	$(if $(CONFIG_ZABBIX_POSTGRESQL),--with-postgresql) \
-	--with-libevent=$(STAGING_DIR)/usr/include/libevent \
-	--with-libpcre=$(STAGING_DIR)/usr/include \
+	$(if $(CONFIG_ZABBIX_SQLITE),--with-sqlite3=$(STAGING_DIR)/usr) \
+	--with-libevent=$(STAGING_DIR)/usr/include \
+	--with-libpcre2=$(STAGING_DIR)/usr/include \
 	--with-zlib=$(STAGING_DIR)/usr/include
 
 ifeq ($(BUILD_VARIANT),openssl)

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2018 OpenWrt.org
+# Copyright (C) 2016, 2018-2023 Jeffery To
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,15 +8,17 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-attrs
-PKG_VERSION:=21.2.0
+PKG_VERSION:=23.1.0
 PKG_RELEASE:=1
 
 PYPI_NAME:=attrs
-PKG_HASH:=ef6aaac3ca6cd92904cdd0d83f629a15f18053ec84e6432106f7a4d04ae4f5fb
+PKG_HASH:=6279836d581513a26f1bf235f9acd333bc9115683f14f7e8fae46c98fc50e015
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=Jeffery To <jeffery.to@gmail.com>
+
+PKG_BUILD_DEPENDS:=python-hatchling/host python-hatch-vcs/host python-hatch-fancy-pypi-readme/host
 
 include ../pypi.mk
 include $(INCLUDE_DIR)/package.mk
