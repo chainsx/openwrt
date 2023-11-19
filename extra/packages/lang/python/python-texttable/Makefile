@@ -1,11 +1,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-texttable
-PKG_VERSION:=1.7.0
+PKG_VERSION:=1.6.3
 PKG_RELEASE:=1
 
 PYPI_NAME:=texttable
-PKG_HASH:=2d2068fb55115807d3ac77a4ca68fa48803e84ebb0ee2340f858107a36522638
+PKG_HASH:=ce0faf21aa77d806bbff22b107cc22cce68dc9438f97a2df32c93e9afa4ce436
 
 PKG_MAINTAINER:=Javier Marcet <javier@marcet.info>
 PKG_LICENSE:=MIT

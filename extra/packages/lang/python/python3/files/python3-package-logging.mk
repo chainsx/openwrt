@@ -7,14 +7,8 @@
 
 define Package/python3-logging
 $(call Package/python3/Default)
-  TITLE+= logging module
+  TITLE:=Python $(PYTHON3_VERSION) logging module
   DEPENDS:=+python3-light
-endef
-
-define Package/python3-logging/description
-$(call Package/python3/Default/description)
-
-This package contains the logging module.
 endef
 
 $(eval $(call Py3BasePackage,python3-logging, \

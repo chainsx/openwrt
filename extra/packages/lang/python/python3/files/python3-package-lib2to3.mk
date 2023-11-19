@@ -7,14 +7,8 @@
 
 define Package/python3-lib2to3
 $(call Package/python3/Default)
-  TITLE+= lib2to3 module
+  TITLE:=Python $(PYTHON3_VERSION) lib2to3 module
   DEPENDS:=+python3
-endef
-
-define Package/python3-lib2to3/description
-$(call Package/python3/Default/description)
-
-This package contains the lib2to3 module.
 endef
 
 $(eval $(call Py3BasePackage,python3-lib2to3, \

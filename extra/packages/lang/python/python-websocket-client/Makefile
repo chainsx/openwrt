@@ -1,14 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-websocket-client
-PKG_VERSION:=1.6.4
-PKG_RELEASE:=1
+PKG_VERSION:=0.57.0
+PKG_RELEASE:=2
 
-PYPI_NAME:=websocket-client
-PKG_HASH:=b3324019b3c28572086c4a319f91d1dcd44e6e11cd340232978c684a7650d0df
+PYPI_NAME:=websocket_client
+PKG_HASH:=d735b91d6d1692a6a181f2a8c9e0238e5f6373356f561bb9dc4c7af36f452010
 
 PKG_MAINTAINER:=Javier Marcet <javier@marcet.info>
-PKG_LICENSE:=Apache-2.0
+PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE
 
 include ../pypi.mk
@@ -21,7 +21,7 @@ define Package/python3-websocket-client
   SUBMENU:=Python
   TITLE:=WebSocket client for Python. hybi13 is supported
   URL:=https://github.com/websocket-client/websocket-client
-  DEPENDS:=+python3-light +python3-logging +python3-openssl
+  DEPENDS:=+python3-light +python3-logging +python3-openssl +python3-six
 endef
 
 define Package/python3-websocket-client/description
@@ -29,11 +29,6 @@ define Package/python3-websocket-client/description
   level APIs for WebSocket. All APIs are the synchronous functions.
 
   websocket-client supports only hybi-13.
-endef
-
-define Py3Package/python3-websocket-client/filespec
-+|$(PYTHON3_PKG_DIR)
--|$(PYTHON3_PKG_DIR)/websocket/tests
 endef
 
 $(eval $(call Py3Package,python3-websocket-client))

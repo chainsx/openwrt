@@ -8,17 +8,17 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-apipkg
-PKG_VERSION:=3.0.1
-PKG_RELEASE:=1
+PKG_VERSION:=1.5
+PKG_RELEASE:=2
 
 PYPI_NAME:=apipkg
-PKG_HASH:=f8c021adafc9132ac2fba9fd3c5768365d0a8c10aa375fb15e329f1fce8a5f01
+PKG_HASH:=37228cda29411948b422fae072f57e31d3396d2ee1c9783775980ee9c9990af6
 
-PKG_MAINTAINER:=Jan Pavlinec <jan.pavlinec1@gmail.com>
+PKG_MAINTAINER:=Jan Pavlinec <jan.pavlinec@nic.cz>
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
 
-PKG_BUILD_DEPENDS:=python-hatchling/host python-hatch-vcs/host
+HOST_PYTHON3_PACKAGE_BUILD_DEPENDS:=setuptools-scm
 
 include ../pypi.mk
 include $(INCLUDE_DIR)/package.mk
@@ -28,14 +28,14 @@ define Package/python3-apipkg
   SUBMENU:=Python
   SECTION:=lang
   CATEGORY:=Languages
-  TITLE:=Namespace control and lazy-import mechanism
+  TITLE:= Controler for exported namespace of a Python package a
   URL:=https://github.com/pytest-dev/apipkg
-  DEPENDS:=+python3-light
+  DEPENDS:= +python3-light
 endef
 
 define Package/python3-apipkg/description
-apipkg is used to control the exported namespace of a Python package and
-greatly reduce the number of imports for users.
+  apipkg is used to control the exported namespace of a Python package and greatly reduce
+  the number of imports for users.
 endef
 
 $(eval $(call Py3Package,python3-apipkg))

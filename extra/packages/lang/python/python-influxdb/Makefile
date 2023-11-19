@@ -5,15 +5,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-influxdb
-PKG_VERSION:=5.3.1
+PKG_VERSION:=5.3.0
 PKG_RELEASE:=1
-PKG_MAINTAINER:=Josef Schlehofer <pepe.schlehofer@gmail.com> 
+PKG_MAINTAINER:=Karel Kočí <cynerd@email.cz>
 
 PYPI_NAME:=influxdb
-PKG_HASH:=46f85e7b04ee4b3dee894672be6a295c94709003a7ddea8820deec2ac4d8b27a
+PKG_HASH:=9bcaafd57ac152b9824ab12ed19f204206ef5df8af68404770554c5b55b475f6
 
 PKG_LICENSE:=MIT
-PKG_LICENSE_FILES:=LICENSE
 
 include ../pypi.mk
 include $(INCLUDE_DIR)/package.mk
@@ -24,9 +23,8 @@ define Package/python3-influxdb
   CATEGORY:=Languages
   SUBMENU:=Python
   URL:=https://github.com/influxdb/influxdb-python
-  TITLE:=InfluxDB client
+  TITLE:=python3-influxdb
   DEPENDS:=\
-    +python3-light \
     +python3-requests \
     +python3-pytz \
     +python3-six \

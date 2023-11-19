@@ -5,13 +5,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-intelhex
-PKG_VERSION:=2.3.0
-PKG_RELEASE:=1
+PKG_VERSION:=2.2.1
+PKG_RELEASE:=3
 
-PYPI_NAME:=intelhex
-PKG_HASH:=892b7361a719f4945237da8ccf754e9513db32f5628852785aea108dcd250093
+PYPI_NAME:=IntelHex
+PYPI_SOURCE_NAME:=intelhex
+PKG_HASH:=009d8511e0d50639230c39af9607deee771cf026f67ef7507a8c3fd4fa927832
 
-PKG_MAINTAINER:=Josef Schlehofer <pepe.schlehofer@gmail.com> 
+PKG_MAINTAINER:=Karel Kočí <cynerd@email.cz>
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE.txt
 
@@ -23,8 +24,8 @@ define Package/python3-intelhex
   SECTION:=lang
   CATEGORY:=Languages
   SUBMENU:=Python
-  TITLE:=Intel HEX files manipulations
-  URL:=https://github.com/python-intelhex/intelhex
+  TITLE:=python3-intelhex
+  URL:=https://github.com/bialix/intelhex
   DEPENDS:=+python3-light
 endef
 
@@ -32,6 +33,8 @@ define Package/python3-intelhex/description
   This work implements an intelhex Python library to read, write, create from
   scratch and manipulate data from Intel HEX file format.
 endef
+
+PYTHON3_PKG_SETUP_ARGS:=
 
 $(eval $(call Py3Package,python3-intelhex))
 $(eval $(call BuildPackage,python3-intelhex))

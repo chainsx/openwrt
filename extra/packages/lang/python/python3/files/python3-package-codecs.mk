@@ -7,14 +7,8 @@
 
 define Package/python3-codecs
 $(call Package/python3/Default)
-  TITLE+= codecs/Unicode support
+  TITLE:=Python $(PYTHON3_VERSION) codecs + unicode support
   DEPENDS:=+python3-light
-endef
-
-define Package/python3-codecs/description
-$(call Package/python3/Default/description)
-
-This package contains codecs and Unicode support.
 endef
 
 $(eval $(call Py3BasePackage,python3-codecs, \

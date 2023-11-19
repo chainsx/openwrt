@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015-2016, 2018-2020, 2023 Jeffery To
+# Copyright (C) 2015-2019 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,17 +8,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-idna
-PKG_VERSION:=3.4
+PKG_VERSION:=3.2
 PKG_RELEASE:=1
 
 PYPI_NAME:=idna
-PKG_HASH:=814f528e8dead7d329833b91c5faa87d60bf71824cd12a7530b5526063d02cb4
+PKG_HASH:=467fbad99067910785144ce333826c71fb0e63a425657295239737f7ecd125f3
 
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE.rst
 PKG_MAINTAINER:=Jeffery To <jeffery.to@gmail.com>
-
-PKG_BUILD_DEPENDS:=python-flit-core/host
 
 include ../pypi.mk
 include $(INCLUDE_DIR)/package.mk

@@ -7,14 +7,8 @@
 
 define Package/python3-pydoc
 $(call Package/python3/Default)
-  TITLE+= pydoc module
+  TITLE:=Python $(PYTHON3_VERSION) pydoc module
   DEPENDS:=+python3-light
-endef
-
-define Package/python3-pydoc/description
-$(call Package/python3/Default/description)
-
-This package contains the pydoc module.
 endef
 
 $(eval $(call Py3BasePackage,python3-pydoc, \

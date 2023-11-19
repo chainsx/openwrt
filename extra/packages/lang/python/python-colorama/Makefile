@@ -1,17 +1,14 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python-colorama
-PKG_VERSION:=0.4.6
-PKG_RELEASE:=1
+PKG_NAME:=colorama
+PKG_VERSION:=0.4.1
+PKG_RELEASE:=2
 
-PYPI_NAME:=colorama
-PKG_HASH:=08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44
+PYPI_NAME:=$(PKG_NAME)
+PKG_HASH:=05eed71e2e327246ad6b38c540c4a3117230b19679b875190486ddd2d721422d
 
 PKG_MAINTAINER:=Daniel Danzberger <daniel@dd-wrt.com>
-PKG_LICENSE:=BSD-3-Clause
-PKG_LICENSE_FILES:=LICENSE.txt
-
-PKG_BUILD_DEPENDS:=python-hatchling/host
+PKG_LICENSE:=MIT
 
 include ../pypi.mk
 include $(INCLUDE_DIR)/package.mk
@@ -21,14 +18,14 @@ define Package/python3-colorama
   SUBMENU:=Python
   SECTION:=lang
   CATEGORY:=Languages
-  TITLE:=Cross-platform colored terminal text
+  TITLE:=colorama
   URL:=https://github.com/tartley/colorama
-  DEPENDS:=+python3-light
+  DEPENDS:=+python3
 endef
 
 define Package/python3-colorama/description
-Makes ANSI escape character sequences (for producing colored terminal
-text and cursor positioning) work under MS Windows.
+Makes ANSI escape character sequences
+(for producing colored terminal text and cursor positioning) work under MS Windows.
 endef
 
 $(eval $(call Py3Package,python3-colorama))

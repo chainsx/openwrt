@@ -5,11 +5,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pycurl
-PKG_VERSION:=7.45.2
-PKG_RELEASE:=3
+PKG_VERSION:=7.43.0.6
+PKG_RELEASE:=1
 
 PYPI_NAME:=$(PKG_NAME)
-PKG_HASH:=5730590be0271364a5bddd9e245c9cc0fb710c4cbacbdd95264a3122d23224ca
+PKG_HASH:=8301518689daefa53726b59ded6b48f33751c383cf987b0ccfbbc4ed40281325
 
 PKG_MAINTAINER:=Waldemar Konik <informatyk74@interia.pl>
 PKG_LICENSE:=LGPL-2.1
@@ -32,20 +32,22 @@ define Package/python3-curl/description
 PycURL is a Python interface to libcurl, the multiprotocol file transfer library.
 endef
 
+PYTHON3_PKG_SETUP_ARGS:=
+
 ifdef CONFIG_LIBCURL_OPENSSL
-  PYTHON3_PKG_BUILD_VARS:=PYCURL_SSL_LIBRARY=openssl
+  PYTHON3_PKG_SETUP_ARGS+=--with-openssl
 endif
 
 ifdef CONFIG_LIBCURL_GNUTLS
-  PYTHON3_PKG_BUILD_VARS:=PYCURL_SSL_LIBRARY=gnutls
+  PYTHON3_PKG_SETUP_ARGS+=--with-gnutls
 endif
 
 ifdef CONFIG_LIBCURL_MBEDTLS
-  PYTHON3_PKG_BUILD_VARS:=PYCURL_SSL_LIBRARY=mbedtls
+  PYTHON3_PKG_SETUP_ARGS+=--with-mbedtls
 endif
 
 ifdef CONFIG_LIBCURL_WOLFSSL
-  PYTHON3_PKG_BUILD_VARS:=PYCURL_SSL_LIBRARY=wolfssl
+  PYTHON3_PKG_SETUP_ARGS+=--with-wolfssl
 endif
 
 $(eval $(call Py3Package,python3-curl))

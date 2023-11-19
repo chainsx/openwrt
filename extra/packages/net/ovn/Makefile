@@ -22,7 +22,6 @@ PKG_LICENSE_FILES:=LICENSE
 PKG_CPE_ID:=cpe:/a:openvswitch:openvswitch
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
-PKG_BUILD_DEPENDS+=python3/host
 PKG_BUILD_FLAGS:=no-mips16 lto
 PKG_BUILD_PARALLEL:=1
 PKG_FIXUP:=autoreconf
