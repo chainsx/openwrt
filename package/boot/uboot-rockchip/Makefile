@@ -5,12 +5,14 @@
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
-PKG_VERSION:=2023.04
+PKG_VERSION:=2024.01-rc5
 PKG_RELEASE:=$(AUTORELEASE)
 
-PKG_HASH:=e31cac91545ff41b71cec5d8c22afd695645cd6e2a442ccdacacd60534069341
+PKG_HASH:=5fc8ec286587118ac2a8e9ea12f5e19f8105847052428a551af1be772e17b1cd
 
 PKG_MAINTAINER:=Tobias Maedel <openwrt@tbspace.de>
+
+UBOOT_USE_INTREE_DTC:=1
 
 include $(INCLUDE_DIR)/u-boot.mk
 include $(INCLUDE_DIR)/package.mk
@@ -312,10 +314,10 @@ UBOOT_TARGETS := \
   orangepi-r1-plus-lts-rk3328
 
 UBOOT_CONFIGURE_VARS += USE_PRIVATE_LIBGCC=yes
-
+  
 UBOOT_MAKE_FLAGS += \
   PATH=$(STAGING_DIR_HOST)/bin:$(PATH) \
-  BL31=$(STAGING_DIR_IMAGE)/$(ATF)
+  BL31=$(STAGING_DIR_IMAGE)/$(ATF) \
 
 ifeq ($(CONFIG_PACKAGE_arm-trusted-firmware-rk3568),y)
 UBOOT_MAKE_FLAGS += \
@@ -326,14 +328,6 @@ ifeq ($(CONFIG_PACKAGE_arm-trusted-firmware-rk3566),y)
 UBOOT_MAKE_FLAGS += \
   ROCKCHIP_TPL=$(STAGING_DIR_IMAGE)/$(DDR)
 endif
-
-define Build/Configure
-	$(call Build/Configure/U-Boot)
-
-	$(SED) 's/CONFIG_TOOLS_LIBCRYPTO=y/# CONFIG_TOOLS_LIBCRYPTO is not set/' $(PKG_BUILD_DIR)/.config
-	$(SED) 's#CONFIG_MKIMAGE_DTC_PATH=.*#CONFIG_MKIMAGE_DTC_PATH="$(PKG_BUILD_DIR)/scripts/dtc/dtc"#g' $(PKG_BUILD_DIR)/.config
-	echo 'CONFIG_IDENT_STRING=" OpenWrt"' >> $(PKG_BUILD_DIR)/.config
-endef
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(STAGING_DIR_IMAGE)

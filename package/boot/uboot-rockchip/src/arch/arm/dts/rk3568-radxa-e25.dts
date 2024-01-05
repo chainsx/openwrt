@@ -1,8 +1,0 @@
-// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-
-#include "rk3568-evb.dts"
-
-/ {
-	model = "Radxa E25";
-	compatible = "radxa,e25", "rockchip,rk3568";
-};
