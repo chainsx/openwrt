@@ -120,6 +120,14 @@ define Device/xunlong_orangepi-zero2
 endef
 TARGET_DEVICES += xunlong_orangepi-zero2
 
+define Device/yuzuki_chameleon
+  DEVICE_VENDOR := YuzukiHD
+  DEVICE_MODEL := Yuzuki Chameleon
+  $(Device/sun50i-h616)
+  SUNXI_DTS := $$(SUNXI_DTS_DIR)$$(SOC)-yuzukichameleon-sd
+endef
+TARGET_DEVICES += yuzuki_chameleon
+
 define Device/xunlong_orangepi-zero-plus
   DEVICE_VENDOR := Xunlong
   DEVICE_MODEL := Orange Pi Zero Plus
