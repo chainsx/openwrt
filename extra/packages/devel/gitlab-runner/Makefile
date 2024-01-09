@@ -8,22 +8,24 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gitlab-runner
-PKG_VERSION:=14.0.1
-PKG_RELEASE:=$(AUTORELEASE)
+PKG_VERSION:=16.0.2
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-v$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://gitlab.com/gitlab-org/gitlab-runner/-/archive/v$(PKG_VERSION)
-PKG_HASH:=22fe41816bb288c6f6513214f0d1d68d33d298aeaa9cd3a4f0a8393e6b20415f
+PKG_HASH:=f874b9babe21ae04007abfc901e9ad4c0c1ec22095d4de3e22e176914683cb5d
 
-PKG_MAINTAINER:=Jan Pavlinec <jan.pavlinec@nic.cz>
+PKG_MAINTAINER:=Jan Pavlinec <jan.pavlinec1@gmail.com>
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/gitlab-runner-v$(PKG_VERSION)
 PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
-PKG_USE_MIPS16:=0
+PKG_BUILD_FLAGS:=no-mips16
+
 GO_PKG:=gitlab.com/gitlab-org/gitlab-runner
+GO_PKG_LDFLAGS_X:=$(GO_PKG)/common.VERSION=$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include ../../lang/golang/golang-package.mk
@@ -39,6 +41,13 @@ endef
 define Package/gitlab-runner/description
   GitLab Runner is an application that works with
   GitLab CI/CD to run jobs in a pipeline.
+endef
+
+define Package/gitlab-runner/install
+	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
+	$(INSTALL_DIR) $(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/gitlab-runner $(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/gitlab-runner-helper $(1)/usr/bin/
 endef
 
 $(eval $(call GoBinPackage,gitlab-runner))
