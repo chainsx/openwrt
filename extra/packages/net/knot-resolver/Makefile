@@ -17,15 +17,12 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://secure.nic.cz/files/knot-resolver
 PKG_HASH:=383ef6db1cccabd2dd788ea9385f05e98a2bafdfeb7f0eda57ff9d572f4fad71
 
-PKG_MAINTAINER:=Jan Pavlinec <jan.pavlinec@nic.cz>
+PKG_MAINTAINER:=Jan Pavlinec <jan.pavlinec1@gmail.com>
 PKG_LICENSE:=GPL-3.0-later
 PKG_LICENSE_FILES:=COPYING
 
-PKG_BUILD_DEPENDS:=meson/host
-PKG_INSTALL:=1
-
 include $(INCLUDE_DIR)/package.mk
-include ../../devel/meson/meson.mk
+include $(INCLUDE_DIR)/meson.mk
 
 define Package/knot-resolver
   SECTION:=net
@@ -37,7 +34,7 @@ define Package/knot-resolver
     +knot-libs \
     +knot-libzscanner \
     +libuv \
-    +luajit \
+    @HAS_LUAJIT_ARCH +luajit \
     +luasec \
     +luasocket \
     +libstdcpp \

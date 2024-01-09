@@ -8,21 +8,20 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lighttpd
-PKG_VERSION:=1.4.71
+PKG_VERSION:=1.4.73
 PKG_RELEASE:=1
 # release candidate ~rcX testing; remove for release
 #PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://download.lighttpd.net/lighttpd/releases-1.4.x
-PKG_HASH:=b8b6915da20396fdc354df3324d5e440169b2e5ea7859e3a775213841325afac
+PKG_HASH:=818816d0b314b0aa8728a7076513435f6d5eb227f3b61323468e1f10dbe84ca8
 
-PKG_MAINTAINER:=W. Michael Petullo <mike@flyn.org>
+PKG_MAINTAINER:=Glenn Strauss <gstrauss@gluelogic.com>
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=COPYING
 PKG_CPE_ID:=cpe:/a:lighttpd:lighttpd
 
-PKG_INSTALL:=1
 # list config packages affecting MESON_ARGS
 REBUILD_MODULES:= \
   authn_dbi \
@@ -53,16 +52,15 @@ PKG_CONFIG_DEPENDS:= \
   CONFIG_LIGHTTPD_CRYPTOLIB_WOLFSSL
 
 PKG_BUILD_DEPENDS:= \
-  meson/host \
   LIGHTTPD_PCRE2:pcre2 \
   LIGHTTPD_CRYPTOLIB_NETTLE:nettle \
   LIGHTTPD_CRYPTOLIB_MBEDTLS:mbedtls \
   LIGHTTPD_CRYPTOLIB_WOLFSSL:wolfssl
 
 include $(INCLUDE_DIR)/package.mk
-include ../../devel/meson/meson.mk
+include $(INCLUDE_DIR)/meson.mk
 
-# choose crypto lib for lighttpd to use for crypto algorithms (default: nettle)
+# choose crypto lib for lighttpd to use for crypto algorithms
 # (separate from lighttpd TLS modules, which are each standalone)
 cryptolibdep= \
   +LIGHTTPD_CRYPTOLIB_NETTLE:libnettle \
@@ -71,8 +69,6 @@ cryptolibdep= \
 ifdef CONFIG_LIGHTTPD_CRYPTOLIB_MBEDTLS
   TARGET_CPPFLAGS += -DFORCE_MBEDTLS_CRYPTO
 else ifdef CONFIG_LIGHTTPD_CRYPTOLIB_WOLFSSL
-  # (Note: if CONFIG_LIGHTTPD_CRYPTOLIB_WOLFSSL is set,
-  #  then lighttpd-mod-mbedtls should not be selected to also be built)
   TARGET_CPPFLAGS += -DFORCE_WOLFSSL_CRYPTO
 endif
 
@@ -125,7 +121,7 @@ config LIGHTTPD_PCRE2
 if PACKAGE_lighttpd
 	choice
 		prompt "crypto library"
-		default LIGHTTPD_CRYPTOLIB_NETTLE
+		default LIGHTTPD_CRYPTOLIB_MBEDTLS
 		help
 		  library to use for cryptographic algorithms
 
@@ -253,7 +249,6 @@ $(eval $(call BuildPlugin,accesslog,Access logging,,30))
 $(eval $(call BuildPlugin,ajp13,AJP13 Tomcat connector,,30))
 $(eval $(call BuildPlugin,cgi,CGI,,30))
 $(eval $(call BuildPlugin,deflate,Compress dynamic output,+PACKAGE_lighttpd-mod-deflate:zlib,30))
-$(eval $(call BuildPlugin,evasive,Evasive,,30))
 $(eval $(call BuildPlugin,extforward,Extract client,,30))
 $(eval $(call BuildPlugin,gnutls,TLS using gnutls,@LIGHTTPD_SSL +PACKAGE_lighttpd-mod-gnutls:libgnutls,30))
 $(eval $(call BuildPlugin,magnet,Magnet,+PACKAGE_lighttpd-mod-magnet:liblua,30))
@@ -263,13 +258,10 @@ $(eval $(call BuildPlugin,nss,TLS using nss,@LIGHTTPD_SSL +PACKAGE_lighttpd-mod-
 $(eval $(call BuildPlugin,openssl,TLS using openssl,@LIGHTTPD_SSL +PACKAGE_lighttpd-mod-openssl:libopenssl,30))
 $(eval $(call BuildPlugin,proxy,Proxy,,30))
 $(eval $(call BuildPlugin,rrdtool,RRDtool,rrdtool1,30))
-$(eval $(call BuildPlugin,secdownload,Secure and fast download,+PACKAGE_lighttpd-mod-secdownload:libnettle,30))
 $(eval $(call BuildPlugin,sockproxy,sockproxy,,30))
 $(eval $(call BuildPlugin,ssi,SSI,,30))
 $(eval $(call BuildPlugin,status,Server status display,,30))
-$(eval $(call BuildPlugin,uploadprogress,Upload Progress,,30))
 $(eval $(call BuildPlugin,userdir,User directory,,30))
-$(eval $(call BuildPlugin,usertrack,User tracking,+PACKAGE_lighttpd-mod-usertrack:libnettle,30))
 $(eval $(call BuildPlugin,vhostdb,Virtual Host Database,,30))
 $(eval $(call BuildPlugin,vhostdb_dbi,Virtual Host Database (DBI),lighttpd-mod-vhostdb +PACKAGE_lighttpd-mod-vhostdb_dbi:libdbi,30))
 $(eval $(call BuildPlugin,vhostdb_ldap,Virtual Host Database (LDAP),lighttpd-mod-vhostdb +PACKAGE_lighttpd-mod-vhostdb_ldap:libopenldap,30))

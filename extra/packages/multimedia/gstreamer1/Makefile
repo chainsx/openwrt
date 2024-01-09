@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gstreamer1
-PKG_VERSION:=1.18.1
+PKG_VERSION:=1.22.8
 PKG_RELEASE:=1
 
 PKG_SOURCE:=gstreamer-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://gstreamer.freedesktop.org/src/gstreamer
-PKG_HASH:=79df8de21f284a105a5c1568527f8c559c583c85c0f2bd7bdb5b0372b8beecba
+PKG_HASH:=ad4e3db1771139b1db17b1afa7c05db083ae0100bd4da244b71f162dcce41bfc
 PKG_BUILD_DIR:=$(BUILD_DIR)/gstreamer-$(PKG_VERSION)
 
 PKG_MAINTAINER:=W. Michael Petullo <mike@flyn.org> \
@@ -22,12 +22,11 @@ PKG_LICENSE:=LGPL-2.1-or-later
 PKG_LICENSE_FILES:=COPYING
 PKG_CPE_ID:=cpe:/a:gstreamer_project:gstreamer
 
-PKG_INSTALL:=1
-PKG_BUILD_DEPENDS:=meson/host glib2/host gettext-full/host
+PKG_BUILD_DEPENDS:=glib2/host gettext-full/host
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
-include ../../devel/meson/meson.mk
+include $(INCLUDE_DIR)/meson.mk
 
 define Package/gstreamer1/Default
   CATEGORY:=Multimedia
@@ -134,7 +133,6 @@ MESON_ARGS += \
 	-Dexamples=disabled \
 	-Dbenchmarks=disabled \
 	-Dtools=enabled \
-	-Dgtk_doc=disabled \
 	-Dintrospection=disabled \
 	-Dnls=enabled \
 	-Dgobject-cast-checks=disabled \

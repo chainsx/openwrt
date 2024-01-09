@@ -8,25 +8,25 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=clamav
-PKG_VERSION:=0.104.2
-PKG_RELEASE:=$(AUTORELEASE)
+PKG_VERSION:=0.104.4
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://www.clamav.net/downloads/production/
-PKG_HASH:=3e45e46d9aaeb3a6956ed30376237ab7c4cd9573bc0f5d6fc15c588d30978d9d
+PKG_HASH:=8ac32e910aa744cc7f921c5122ba523ef1ffbbbf94545f94fc4a976b502be74b
 
-PKG_MAINTAINER:=Marko Ratkaj <marko.ratkaj@sartura.hr> \
+PKG_MAINTAINER:=Marko Ratkaj <markoratkaj@gmail.com> \
 		Lucian Cristian <lucian.cristian@gmail.com>
 PKG_LICENSE:=GPL-2.0-only
 PKG_LICENSE_FILES:=COPYING*
 PKG_CPE_ID:=cpe:/a:clamav:clamav
 
 PKG_BUILD_DEPENDS:=ncurses
-PKG_BUILD_PARALLEL:=1
+PKG_BUILD_FLAGS:=gc-sections lto
 
 include $(INCLUDE_DIR)/package.mk
-include $(INCLUDE_DIR)/cmake.mk
 include $(INCLUDE_DIR)/nls.mk
+include $(INCLUDE_DIR)/cmake.mk
 
 define Package/clamav/Default
   SECTION:=net
@@ -71,12 +71,10 @@ CMAKE_OPTIONS += \
 	-DENABLE_EXAMPLES=OFF \
 	-DENABLE_UNRAR=OFF \
 	-DENABLE_SYSTEMD=OFF \
-	-DIconv_INCLUDE_DIR=$(ICONV_PREFIX)/include \
-	-DIconv_LIBRARY=$(ICONV_PREFIX)/lib/libiconv.$(if $(ICONV_FULL),so,a) \
 	-DHAVE_SYSTEM_LFS_FTS=O$(if $(CONFIG_USE_GLIBC),N,FF)
 
-TARGET_CXXFLAGS += -ffunction-sections -fdata-sections -fno-rtti -flto
-TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
+TARGET_CXXFLAGS += -fno-rtti
+TARGET_LDFLAGS += -Wl,--as-needed
 
 define Package/clamav/conffiles
 /etc/config/clamav

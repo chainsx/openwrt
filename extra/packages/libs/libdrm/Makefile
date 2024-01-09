@@ -6,26 +6,28 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libdrm
-PKG_VERSION:=2.4.102
+PKG_VERSION:=2.4.115
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://dri.freedesktop.org/libdrm
-PKG_HASH:=8bcbf9336c28e393d76c1f16d7e79e394a7fce8a2e929d52d3ad7ad8525ba05b
+PKG_HASH:=554cfbfe0542bddb391b4e3e05bfbbfc3e282b955bd56218d21c0616481f65eb
 
 PKG_MAINTAINER:=Lucian Cristian <lucian.cristian@gmail.com>
 PKG_LICENSE:=BSD-3-Clause
 
-PKG_INSTALL:=1
-PKG_BUILD_DEPENDS:=meson/host
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_LIBDRM_INTEL \
+	CONFIG_LIBDRM_NOUVEAU \
+	CONFIG_LIBDRM_RADEON
 
 include $(INCLUDE_DIR)/package.mk
-include ../../devel/meson/meson.mk
+include $(INCLUDE_DIR)/meson.mk
 
 define Package/libdrm
   SECTION:=libs
   CATEGORY:=Libraries
-  DEPENDS:=+libpciaccess
+  DEPENDS:=+LIBDRM_INTEL:libpciaccess
   TITLE:=libdrm
   URL:=https://dri.freedesktop.org/
 endef
@@ -36,22 +38,25 @@ define Package/libdrm/description
   of the DRI protocol.
 endef
 
+define Package/libdrm/config
+	source "$(SOURCE)/Config.in"
+endef
+
 MESON_ARGS += \
-	-Dlibkms=false \
-	-Dintel=false \
-	-Dradeon=false \
-	-Damdgpu=false \
-	-Dnouveau=false \
-	-Dvmwgfx=false \
-	-Domap=false \
-	-Dexynos=false \
-	-Dfreedreno=false \
-	-Dtegra=false \
-	-Dvc4=false \
-	-Detnaviv=false \
-	-Dcairo-tests=false \
-	-Dman-pages=false \
-	-Dvalgrind=false \
+	-Dintel=$(if $(CONFIG_LIBDRM_INTEL),en,dis)abled \
+	-Dradeon=$(if $(CONFIG_LIBDRM_RADEON),en,dis)abled \
+	-Damdgpu=disabled \
+	-Dnouveau=$(if $(CONFIG_LIBDRM_NOUVEAU),en,dis)abled \
+	-Dvmwgfx=disabled \
+	-Domap=disabled \
+	-Dexynos=disabled \
+	-Dfreedreno=disabled \
+	-Dtegra=disabled \
+	-Dvc4=disabled \
+	-Detnaviv=disabled \
+	-Dcairo-tests=disabled \
+	-Dman-pages=disabled \
+	-Dvalgrind=disabled \
 	-Dfreedreno-kgsl=false \
 	-Dinstall-test-programs=false \
 	-Dudev=false
@@ -60,14 +65,14 @@ define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/* $(1)/usr/include/
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libdrm.so* $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/lib*.so* $(1)/usr/lib/
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/libdrm.pc $(1)/usr/lib/pkgconfig
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/*.pc $(1)/usr/lib/pkgconfig
 endef
 
 define Package/libdrm/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libdrm.so.* $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/lib*.so.* $(1)/usr/lib/
 endef
 
 $(eval $(call BuildPackage,libdrm))

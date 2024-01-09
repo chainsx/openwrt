@@ -6,7 +6,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libevdev
 PKG_VERSION:=1.13.0
-PKG_RELEASE:=$(AUTORELEASE)
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://www.freedesktop.org/software/libevdev/
@@ -16,11 +16,8 @@ PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 
-PKG_INSTALL:=1
-PKG_BUILD_DEPENDS:=meson/host
-
 include $(INCLUDE_DIR)/package.mk
-include ../../devel/meson/meson.mk
+include $(INCLUDE_DIR)/meson.mk
 
 define Package/libevdev
   SECTION:=libs
