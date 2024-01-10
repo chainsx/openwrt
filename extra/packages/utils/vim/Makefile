@@ -8,22 +8,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=vim
-PKG_VERSION:=8.2
-PKG_RELEASE:=3
-VIMVER:=82
+PKG_VERSION:=9.0
+PKG_RELEASE:=1
+VIMVER:=90
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=http://ftp.vim.org/pub/vim/unix
-PKG_HASH:=f087f821831b4fece16a0461d574ccd55a8279f64d635510a1e10225966ced3b
-PKG_MAINTAINER:=Marko Ratkaj <marko.ratkaj@sartura.hr>
+PKG_HASH:=a6456bc154999d83d0c20d968ac7ba6e7df0d02f3cb6427fb248660bacfb336e
+PKG_MAINTAINER:=Marko Ratkaj <markoratkaj@gmail.com>
 PKG_CPE_ID:=cpe:/a:vim:vim
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)$(VIMVER)
 PKG_BUILD_PARALLEL:=1
-
-HOST_BUILD_DEPENDS:=libiconv/host
-HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)$(VIMVER)
-HOST_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/host-build.mk
@@ -115,15 +111,6 @@ define Package/xxd/description
  a hex dump back to its original binary form.
 endef
 
-HOST_CONFIGURE_ARGS += \
-	--disable-acl \
-	--disable-gpm \
-	--disable-nls \
-	--disable-selinux \
-	--enable-gui=no \
-	--with-features=normal \
-	--without-x
-
 CONFIGURE_ARGS += \
 	--disable-gui \
 	--disable-gtktest \
@@ -133,6 +120,7 @@ CONFIGURE_ARGS += \
 	--disable-cscope \
 	--disable-gpm \
 	--disable-acl \
+	--disable-libsodium \
 	--disable-selinux \
 	--with-tlib=ncurses \
 	--with-compiledby="non-existent-hostname-compiled"
@@ -225,6 +213,7 @@ define Package/vim-full/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/vim_normal $(1)/usr/bin/vim
 	$(INSTALL_DIR) $(1)/usr/share/vim
+	$(LN) vim $(1)/usr/bin/vimdiff
 	$(INSTALL_CONF) ./files/vimrc.full $(1)/usr/share/vim/vimrc
 endef
 
@@ -260,4 +249,3 @@ $(eval $(call BuildPackage,vim-fuller))
 $(eval $(call BuildPackage,vim-runtime))
 $(eval $(call BuildPackage,vim-help))
 $(eval $(call BuildPackage,xxd))
-$(eval $(call HostBuild))

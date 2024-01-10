@@ -11,7 +11,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=softethervpn
 PKG_VERSION:=4.38-9760
 PKG_VERREL:=rtm
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=softether-src-v$(PKG_VERSION)-$(PKG_VERREL).tar.gz
 PKG_SOURCE_URL:=https://github.com/SoftEtherVPN/SoftEtherVPN_Stable/releases/download/v$(PKG_VERSION)-$(PKG_VERREL)
@@ -24,12 +24,11 @@ PKG_LICENSE_FILES:=COPYING
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/v$(PKG_VERSION)
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)/v$(PKG_VERSION)
 PKG_BUILD_DEPENDS:=softethervpn/host
-HOST_BUILD_DEPENDS:=readline/host libiconv/host
+HOST_BUILD_DEPENDS:=readline/host
 
 PKG_ASLR_PIE:=0
 HAMCORE_SE2:=$(STAGING_DIR_HOST)/share/softethervpn/hamcore.se2
 
-include $(INCLUDE_DIR)/nls.mk
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/host-build.mk
 
@@ -37,12 +36,14 @@ include $(INCLUDE_DIR)/host-build.mk
 HOST_MAKE_FLAGS += -C $(HOST_BUILD_DIR)
 
 # Select 32 or 64 bit Makefile for host build depending on host architecture
-HOST_MAKE_FLAGS += -f src/makefiles/linux_$(if $(shell uname -m | grep 64),64,32)bit.mak
+HOST_MAKE_FLAGS += \
+	-f src/makefiles/$(if $(CONFIG_HOST_OS_MACOS),macos,linux)_$(if $(shell uname -m | grep 64),64,32)bit.mak
 
-HOST_LDFLAGS += -Wl,-rpath$(comma)$(STAGING_DIR_HOSTPKG)/lib
 # Prevent calling upstream configure
 define Host/Configure
 endef
+
+HOST_CFLAGS += $(if $(CONFIG_HOST_OS_MACOS),-Wno-implicit-function-declaration,)
 
 define Host/Compile
 	# Build hamcorebuilder using host compiler and let it generate
@@ -102,7 +103,7 @@ endef
 
 define Package/softethervpn-base
   $(Package/softethervpn/default)
-  DEPENDS:=+libpthread +librt +libreadline +libopenssl +libncurses +kmod-tun +zlib $(ICONV_DEPENDS)
+  DEPENDS:=+libpthread +librt +libreadline +libopenssl +libncurses +kmod-tun +zlib
   TITLE += (Base)
 endef
 

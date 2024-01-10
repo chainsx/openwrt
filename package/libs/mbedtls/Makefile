@@ -9,8 +9,8 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mbedtls
 PKG_VERSION:=2.28.5
-PKG_RELEASE:=1
-PKG_USE_MIPS16:=0
+PKG_RELEASE:=2
+PKG_BUILD_FLAGS:=no-mips16 gc-sections no-lto
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/ARMmbed/mbedtls/tar.gz/v$(PKG_VERSION)?
@@ -60,11 +60,13 @@ MBEDTLS_BUILD_OPTS_CIPHERS= \
 MBEDTLS_BUILD_OPTS= \
   $(MBEDTLS_BUILD_OPTS_CURVES) \
   $(MBEDTLS_BUILD_OPTS_CIPHERS) \
+  CONFIG_MBEDTLS_ARMV8CE_AES_C \
   CONFIG_MBEDTLS_CERTS_C \
   CONFIG_MBEDTLS_CIPHER_MODE_OFB \
   CONFIG_MBEDTLS_CIPHER_MODE_XTS \
   CONFIG_MBEDTLS_DEBUG_C \
   CONFIG_MBEDTLS_ENTROPY_FORCE_SHA256 \
+  CONFIG_MBEDTLS_HAVE_SSE2 \
   CONFIG_MBEDTLS_HKDF_C \
   CONFIG_MBEDTLS_PLATFORM_C \
   CONFIG_MBEDTLS_SELF_TEST \
@@ -121,8 +123,10 @@ This package contains mbedtls helper programs for private key and
 CSR generation (gen_key, cert_req)
 endef
 
-TARGET_CFLAGS += -ffunction-sections -fdata-sections
 TARGET_CFLAGS := $(filter-out -O%,$(TARGET_CFLAGS))
+ifneq ($(CONFIG_MBEDTLS_ARMV8CE_AES_C),)
+  TARGET_CFLAGS := $(filter-out -march=%,$(TARGET_CFLAGS)) -march=armv8-a+crypto
+endif
 
 CMAKE_OPTIONS += \
 	-DCMAKE_POSITION_INDEPENDENT_CODE=ON \
