@@ -1,5 +1,5 @@
 -- This is a free software, use it under GNU General Public License v3.0.
--- Created By ImmortalWrt
+-- Created By OpenWrt
 -- https://github.com/immortalwrt
 
 module("luci.controller.naiveproxy", package.seeall)

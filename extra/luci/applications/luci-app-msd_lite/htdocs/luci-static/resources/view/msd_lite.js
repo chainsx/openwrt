@@ -1,4 +1,4 @@
-/* Copyright (C) 2022 ImmortalWrt.org */
+/* Copyright (C) 2022 OpenWrt.org */
 
 'use strict';
 'require view';

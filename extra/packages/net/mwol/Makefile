@@ -2,7 +2,7 @@
 # Copyright (C) 2019 mleaf.org
 # 微信公众号【WiFi物联网】
 #
-# Copyright (C) 2021 ImmortalWrt
+# Copyright (C) 2021 OpenWrt
 # <https://immortalwrt.org>
 #
 # This is free software, licensed under the GNU General Public License v3.

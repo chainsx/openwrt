@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
-# Copyright (C) 2022 ImmortalWrt.org
+# Copyright (C) 2022 OpenWrt.org
 
 include $(TOPDIR)/rules.mk
 

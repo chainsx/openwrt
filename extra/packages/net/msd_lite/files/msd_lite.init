@@ -1,5 +1,5 @@
 #!/bin/sh /etc/rc.common
-# Copyright (C) 2022 ImmortalWrt.org
+# Copyright (C) 2022 OpenWrt.org
 
 . /lib/functions/network.sh
 

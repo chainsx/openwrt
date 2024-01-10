@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (C) 2021 ImmortalWrt.org
+# Copyright (C) 2021 OpenWrt.org
 
 ACTION="$1"
 VARIANT="$2"

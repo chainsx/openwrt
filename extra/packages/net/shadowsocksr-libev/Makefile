@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2017-2020 Yousong Zhou <yszhou4tech@gmail.com>
 # Copyright (C) 2018 Lean <coolsnowwolf@gmail.com>
-# Copyright (C) 2021 ImmortalWrt.org
+# Copyright (C) 2021 OpenWrt.org
 
 include $(TOPDIR)/rules.mk
 

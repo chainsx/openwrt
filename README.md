@@ -1,4 +1,4 @@
-# 本仓库基于 ImmortalWrt
+# 本仓库基于 OpenWrt
 
 
 ## 特别提醒

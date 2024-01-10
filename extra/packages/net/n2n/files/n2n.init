@@ -1,6 +1,6 @@
 #!/bin/sh /etc/rc.common
 # Copyright (C) 2008-2020 OpenWrt.org
-# Copyright (C) 2022 ImmortalWrt.org
+# Copyright (C) 2022 OpenWrt.org
 
 START=99
 USE_PROCD=1

@@ -1,4 +1,4 @@
--- Created By ImmortalWrt
+-- Created By OpenWrt
 -- https://github.com/immortalwrt
 
 mp = Map("naiveproxy", translate("NaiveProxy"))

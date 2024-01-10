@@ -131,6 +131,7 @@ endif
 ifeq ($(BUILD_VARIANT),ipfull)
   HAVE_ELF:=y
   LIBBPF_FORCE:=on
+  SHARED_LIBS:=y
 endif
 
 ifeq ($(BUILD_VARIANT),tctiny)

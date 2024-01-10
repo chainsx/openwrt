@@ -1,7 +1,7 @@
 # SPDX-License-Identifer: GPL-3.0-only
 #
 # Copyright (C) 2020 - ntop.org and contributors
-# Copyright (C) 2021-2022 ImmortalWrt.org
+# Copyright (C) 2021-2022 OpenWrt.org
 
 include $(TOPDIR)/rules.mk
 

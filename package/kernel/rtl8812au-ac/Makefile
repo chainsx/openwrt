@@ -3,7 +3,7 @@
 # Copyright (C) 2020 stepheny
 # <https://github.com/aircrack-ng/rtl8812au/pull/619>
 #
-# Copyright (C) 2021-2022 ImmortalWrt.org
+# Copyright (C) 2021-2022 OpenWrt.org
 
 include $(TOPDIR)/rules.mk
 

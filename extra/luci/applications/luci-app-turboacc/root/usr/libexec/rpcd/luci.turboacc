@@ -1,5 +1,5 @@
 #!/usr/bin/env lua
--- Copyright (C) 2022 ImmortalWrt.org
+-- Copyright (C) 2022 OpenWrt.org
 
 local json = require "luci.jsonc"
 local fs   = require "nixio.fs"

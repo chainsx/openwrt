@@ -20,7 +20,7 @@ define Package/openwrt-keyring
   SECTION:=base
   CATEGORY:=Base system
   PROVIDES:=lede-keyring
-  TITLE:=ImmortalWrt Developer Keyring
+  TITLE:=OpenWrt Developer Keyring
   URL:=https://openwrt.org/docs/guide-user/security/signatures
 endef
 

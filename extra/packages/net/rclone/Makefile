@@ -1,7 +1,7 @@
 # SPDX-Identifier-License: GPL-3.0-or-later
 #
 # Copyright (C) 2019 Elon Huang <elonhhuang@gmail.com>
-# Copyright (C) 2021 ImmortalWrt.org
+# Copyright (C) 2021 OpenWrt.org
 
 include $(TOPDIR)/rules.mk
 
