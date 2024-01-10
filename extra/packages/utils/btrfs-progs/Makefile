@@ -6,12 +6,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=btrfs-progs
-PKG_VERSION:=5.11
+PKG_VERSION:=6.5.1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-v$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=@KERNEL/linux/kernel/people/kdave/btrfs-progs
-PKG_HASH:=d41961b0a92160c80f894ad9a1882822889c2e1d084cbf3e08b8c214a5cf0137
+PKG_HASH:=dacbb28136e82586af802205263a428c3d1941778bc3fdc9b1b386ea12eb904e
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-v$(PKG_VERSION)
 
 PKG_MAINTAINER:=Karel Kočí <karel.koci@nic.cz>
@@ -21,6 +21,7 @@ PKG_LICENSE_FILES:=COPYING
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
 PKG_BUILD_DEPENDS:=acl
+PKG_BUILD_FLAGS:=gc-sections
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -56,8 +57,7 @@ endef
 boxprogs = btrfsck mkfs.btrfs btrfs-image btrfstune btrfs-find-root
 progs = btrfs-map-logical btrfs-select-super
 
-TARGET_CFLAGS += -ffunction-sections -fdata-sections
-TARGET_LDFLAGS += -Wl,--gc-sections -Wl,--as-needed
+TARGET_LDFLAGS += -Wl,--as-needed
 
 EXTRA_CFLAGS=$(TARGET_CPPFLAGS)
 
@@ -65,6 +65,7 @@ CONFIGURE_ARGS += \
 	--disable-backtrace \
 	--disable-convert \
 	--disable-documentation \
+	--disable-libudev \
 	--disable-python
 ifneq ($(CONFIG_BTRFS_PROGS_ZSTD),y)
 CONFIGURE_ARGS += --disable-zstd
