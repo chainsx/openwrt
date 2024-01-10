@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gst1-plugins-ugly
-PKG_VERSION:=1.18.1
+PKG_VERSION:=1.22.8
 PKG_RELEASE:=1
 
 PKG_SOURCE:=gst-plugins-ugly-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://gstreamer.freedesktop.org/src/gst-plugins-ugly
-PKG_HASH:=18cd6cb829eb9611ca63cbcbf46aca0f0de1dd28b2df18caa2834326a75ff725
+PKG_HASH:=0761d96ba508e01c0271881b26828c2bffd7d8afd50872219f088f755b252ca7
 PKG_BUILD_DIR:=$(BUILD_DIR)/gst-plugins-ugly-$(PKG_VERSION)
 
 PKG_MAINTAINER:=W. Michael Petullo <mike@flyn.org> \
@@ -21,11 +21,9 @@ PKG_MAINTAINER:=W. Michael Petullo <mike@flyn.org> \
 PKG_LICENSE:=LGPL-2.1-or-later
 PKG_LICENSE_FILES:=COPYING
 
-PKG_INSTALL:=1
-
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
-include ../../devel/meson/meson.mk
+include $(INCLUDE_DIR)/meson.mk
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_gst1-mod-asf \
@@ -97,7 +95,6 @@ MESON_ARGS += \
 	-Ddvdlpcmdec=disabled \
 	-Ddvdsub=disabled \
 	-Drealmedia=disabled \
-	-Dxingmux=disabled \
 	\
 	-Da52dec=disabled \
 	-Damrnb=disabled \
@@ -108,6 +105,7 @@ MESON_ARGS += \
 	-Dsidplay=disabled \
 	-Dx264=disabled \
 	\
+	-Dgpl=enabled \
 	-Dnls=enabled \
 	-Dorc=disabled \
 	-Dtests=disabled \
