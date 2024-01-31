@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=alsa-lib
-PKG_VERSION:=1.2.4
+PKG_VERSION:=1.2.10
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-PKG_SOURCE_URL:=ftp://ftp.alsa-project.org/pub/lib/ \
-		http://distfiles.gentoo.org/distfiles/
-PKG_HASH:=f7554be1a56cdff468b58fc1c29b95b64864c590038dd309c7a978c7116908f7
+PKG_SOURCE_URL:=https://www.alsa-project.org/files/pub/lib/ \
+		https://distfiles.gentoo.org/distfiles/
+PKG_HASH:=c86a45a846331b1b0aa6e6be100be2a7aef92efd405cf6bac7eef8174baa920e
 
 PKG_MAINTAINER:=Ted Hess <thess@kitschensync.net>, \
 		Peter Wagner <tripolar@gmx.at>
@@ -22,7 +22,7 @@ PKG_MAINTAINER:=Ted Hess <thess@kitschensync.net>, \
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
-PKG_USE_MIPS16:=0
+PKG_BUILD_FLAGS:=no-mips16 no-lto
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -100,10 +100,13 @@ define Package/alsa-lib/install
 		$(PKG_INSTALL_DIR)/usr/lib/libatopology.so.* \
 		$(1)/usr/lib/
 
-	$(INSTALL_DIR) $(1)/usr/share/alsa/{cards,pcm}
+	$(INSTALL_DIR) $(1)/usr/share/alsa/{cards,ctl,pcm}
 	$(INSTALL_DATA) \
 		$(PKG_INSTALL_DIR)/usr/share/alsa/alsa.conf \
 		$(1)/usr/share/alsa/
+	$(INSTALL_DATA) \
+		$(PKG_INSTALL_DIR)/usr/share/alsa/ctl/* \
+		$(1)/usr/share/alsa/ctl/
 	$(INSTALL_DATA) \
 		$(PKG_INSTALL_DIR)/usr/share/alsa/pcm/* \
 		$(1)/usr/share/alsa/pcm/
