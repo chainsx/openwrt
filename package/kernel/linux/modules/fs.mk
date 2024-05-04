@@ -10,7 +10,7 @@ FS_MENU:=Filesystems
 define KernelPackage/fs-9p
   SUBMENU:=$(FS_MENU)
   TITLE:=Plan 9 Resource Sharing Support
-  DEPENDS:=+kmod-9pnet +LINUX_6_1:kmod-fs-netfs
+  DEPENDS:=+kmod-9pnet +LINUX_6_1:kmod-fs-netfs +LINUX_6_6:kmod-fs-netfs
   KCONFIG:=\
 	CONFIG_9P_FS \
 	CONFIG_9P_FS_POSIX_ACL=n \
@@ -90,6 +90,10 @@ define KernelPackage/fs-smbfs-common
   KCONFIG:=\
 	CONFIG_SMBFS_COMMON@lt6.1 \
 	CONFIG_SMBFS@ge6.1
+  DEPENDS:= \
+	+(LINUX_5_4||LINUX_5_10):kmod-crypto-arc4 \
+	+(LINUX_5_4||LINUX_5_10):kmod-crypto-md4 \
+	+LINUX_6_6:kmod-fs-netfs +LINUX_6_6:kmod-nls-ucs2-utils
   FILES:= \
 	$(LINUX_DIR)/fs/smbfs_common/cifs_arc4.ko@lt6.1 \
 	$(LINUX_DIR)/fs/smbfs_common/cifs_md4.ko@lt6.1 \
@@ -127,9 +131,9 @@ define KernelPackage/fs-cifs
     +kmod-crypto-ccm \
     +kmod-crypto-ecb \
     +kmod-crypto-des \
-    +kmod-asn1-decoder \
-    +kmod-oid-registry \
-    +kmod-dnsresolver
+    +(LINUX_5_15||LINUX_6_1||LINUX_6_6):kmod-asn1-decoder \
+    +(LINUX_5_15||LINUX_6_1||LINUX_6_6):kmod-oid-registry \
+    +(LINUX_5_15||LINUX_6_1||LINUX_6_6):kmod-dnsresolver
 endef
 
 define KernelPackage/fs-cifs/description
@@ -194,7 +198,9 @@ define KernelPackage/fs-exfat
   KCONFIG:= \
 	CONFIG_EXFAT_FS \
 	CONFIG_EXFAT_DEFAULT_IOCHARSET="utf8"
-  FILES:= $(LINUX_DIR)/fs/exfat/exfat.ko
+  FILES:= \
+	$(LINUX_DIR)/drivers/staging/exfat/exfat.ko@lt5.7 \
+	$(LINUX_DIR)/fs/exfat/exfat.ko@ge5.7
   AUTOLOAD:=$(call AutoLoad,30,exfat,1)
   DEPENDS:=+kmod-nls-base
 endef
@@ -343,6 +349,7 @@ define KernelPackage/fs-jfs
   KCONFIG:=CONFIG_JFS_FS
   FILES:=$(LINUX_DIR)/fs/jfs/jfs.ko
   AUTOLOAD:=$(call AutoLoad,30,jfs,1)
+  DEPENDS:=+LINUX_6_6:kmod-nls-ucs2-utils
   $(call AddDepends/nls)
 endef
 
@@ -351,45 +358,6 @@ define KernelPackage/fs-jfs/description
 endef
 
 $(eval $(call KernelPackage,fs-jfs))
-
-
-define KernelPackage/fs-ksmbd
-  SUBMENU:=$(FS_MENU)
-  TITLE:=SMB kernel server support
-  DEPENDS:= \
-	  +kmod-nls-base \
-	  +kmod-nls-utf8 \
-	  +kmod-crypto-md4 \
-          +kmod-crypto-md5 \
-	  +kmod-crypto-hmac \
-	  +kmod-crypto-ecb \
-	  +kmod-crypto-des \
-	  +kmod-crypto-sha256 \
-	  +kmod-crypto-cmac \
-	  +kmod-crypto-sha512 \
-	  +kmod-crypto-aead \
-	  +kmod-crypto-ccm \
-	  +kmod-crypto-gcm \
-	  +kmod-asn1-decoder \
-	  +kmod-oid-registry \
-	  +kmod-fs-smbfs-common
-  KCONFIG:= \
-	CONFIG_SMB_SERVER \
-	CONFIG_SMB_SERVER_SMBDIRECT=n \
-	CONFIG_SMB_SERVER_CHECK_CAP_NET_ADMIN=n \
-	CONFIG_SMB_SERVER_KERBEROS5=n
-  FILES:= \
-	 $(LINUX_DIR)/fs/ksmbd/ksmbd.ko@lt6.1 \
-	 $(LINUX_DIR)/fs/smb/server/ksmbd.ko@ge6.1
-  AUTOLOAD:=$(call AutoLoad,41,ksmbd)
-endef
-
-define KernelPackage/fs-ksmbd/description
- Kernel module for SMB kernel server support
-endef
-
-$(eval $(call KernelPackage,fs-ksmbd))
-
 
 define KernelPackage/fs-minix
   SUBMENU:=$(FS_MENU)
@@ -426,6 +394,7 @@ $(eval $(call KernelPackage,fs-msdos))
 define KernelPackage/fs-netfs
   SUBMENU:=$(FS_MENU)
   TITLE:=Network Filesystems support
+  DEPENDS:=@(LINUX_5_15||LINUX_6_1||LINUX_6_6)
   KCONFIG:= CONFIG_NETFS_SUPPORT
   FILES:=$(LINUX_DIR)/fs/netfs/netfs.ko
   AUTOLOAD:=$(call AutoLoad,28,netfs)
@@ -471,8 +440,7 @@ define KernelPackage/fs-nfs-common
   FILES:= \
 	$(LINUX_DIR)/fs/lockd/lockd.ko \
 	$(LINUX_DIR)/net/sunrpc/sunrpc.ko \
-	$(LINUX_DIR)/fs/nfs_common/grace.ko \
-	$(LINUX_DIR)/fs/nfs_common/nfs_ssc.ko
+	$(LINUX_DIR)/fs/nfs_common/grace.ko
   AUTOLOAD:=$(call AutoLoad,30,grace sunrpc lockd)
 endef
 
@@ -491,7 +459,8 @@ define KernelPackage/fs-nfs-common-rpcsec
 	+kmod-crypto-sha1 \
 	+kmod-crypto-hmac \
 	+kmod-crypto-ecb \
-	+kmod-crypto-arc4
+	+kmod-crypto-arc4 \
+	+kmod-oid-registry
   KCONFIG:= \
 	CONFIG_SUNRPC_GSS \
 	CONFIG_RPCSEC_GSS_KRB5
@@ -670,6 +639,22 @@ endef
 $(eval $(call KernelPackage,fs-vfat))
 
 
+define KernelPackage/fs-virtiofs
+  SUBMENU:=$(FS_MENU)
+  TITLE:=Virtiofs filesystem support
+  DEPENDS:=+kmod-fuse
+  KCONFIG:=CONFIG_VIRTIO_FS
+  FILES:=$(LINUX_DIR)/fs/fuse/virtiofs.ko
+  AUTOLOAD:=$(call AutoLoad,30,virtiofs)
+endef
+
+define KernelPackage/fs-virtiofs/description
+  Kernel module for Virtiofs filesystem support
+endef
+
+$(eval $(call KernelPackage,fs-virtiofs))
+
+
 define KernelPackage/fs-xfs
   SUBMENU:=$(FS_MENU)
   TITLE:=XFS filesystem support
@@ -713,6 +698,7 @@ define KernelPackage/pstore
 	CONFIG_PSTORE_DEFLATE_COMPRESS_DEFAULT=y
   FILES:= $(LINUX_DIR)/fs/pstore/pstore.ko
   AUTOLOAD:=$(call AutoLoad,30,pstore,1)
+  DEPENDS:=+LINUX_6_6:kmod-lib-zlib-deflate +LINUX_6_6:kmod-lib-zlib-inflate
 endef
 
 define KernelPackage/pstore/description

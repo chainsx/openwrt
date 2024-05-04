@@ -263,7 +263,7 @@ define KernelPackage/iscsi-initiator
 	CONFIG_INET \
 	CONFIG_SCSI_LOWLEVEL=y \
 	CONFIG_ISCSI_TCP \
-	CONFIG_SCSI_ISCSI_ATTRS=y
+	CONFIG_SCSI_ISCSI_ATTRS
   FILES:= \
 	$(LINUX_DIR)/drivers/scsi/iscsi_tcp.ko \
 	$(LINUX_DIR)/drivers/scsi/libiscsi.ko \
@@ -525,9 +525,9 @@ define KernelPackage/scsi-core
 	CONFIG_BLK_DEV_SD
   FILES:= \
 	$(LINUX_DIR)/drivers/scsi/scsi_mod.ko \
-	$(LINUX_DIR)/drivers/scsi/scsi_common.ko \
+	$(LINUX_DIR)/drivers/scsi/scsi_common.ko@ge5.15 \
 	$(LINUX_DIR)/drivers/scsi/sd_mod.ko
-  AUTOLOAD:=$(call AutoLoad,40,scsi_mod scsi_common sd_mod,1)
+  AUTOLOAD:=$(call AutoLoad,40,scsi_mod scsi_common@ge5.15 sd_mod,1)
 endef
 
 $(eval $(call KernelPackage,scsi-core))

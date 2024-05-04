@@ -1,22 +1,3 @@
-From 69357074558daf6ff24c9f58714935e9e095a865 Mon Sep 17 00:00:00 2001
-From: OpenWrt community <openwrt-devel@lists.openwrt.org>
-Date: Wed, 13 Jul 2022 13:37:33 +0200
-Subject: [PATCH] kernel: add block fit partition parser
-
----
- block/blk.h                     |  2 ++
- block/partitions/Kconfig        |  7 +++++++
- block/partitions/Makefile       |  1 +
- block/partitions/check.h        |  3 +++
- block/partitions/core.c         | 17 +++++++++++++++++
- block/partitions/efi.c          |  8 ++++++++
- block/partitions/efi.h          |  3 +++
- block/partitions/msdos.c        | 10 ++++++++++
- drivers/mtd/mtd_blkdevs.c       |  2 ++
- drivers/mtd/ubi/block.c         |  3 +++
- include/linux/msdos_partition.h |  1 +
- 11 files changed, 57 insertions(+)
-
 --- a/block/blk.h
 +++ b/block/blk.h
 @@ -354,6 +354,8 @@ void blk_free_ext_minor(unsigned int min
@@ -105,7 +86,7 @@ Subject: [PATCH] kernel: add block fit partition parser
  	/* everything is up and running, commence */
  	err = xa_insert(&disk->part_tbl, partno, bdev, GFP_KERNEL);
  	if (err)
-@@ -595,6 +607,11 @@ static bool blk_add_partition(struct gen
+@@ -600,6 +612,11 @@ static bool blk_add_partition(struct gen
  	    (state->parts[p].flags & ADDPART_FLAG_RAID))
  		md_autodetect_dev(part->bd_dev);
  
