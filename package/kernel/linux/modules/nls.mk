@@ -340,6 +340,7 @@ endef
 
 $(eval $(call KernelPackage,nls-utf8))
 
+
 define KernelPackage/nls-ucs2-utils
   SUBMENU:=Native Language Support
   TITLE:=UCS-2 common library

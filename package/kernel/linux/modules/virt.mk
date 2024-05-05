@@ -78,17 +78,16 @@ $(eval $(call KernelPackage,kvm-amd))
 define KernelPackage/vfio
   SUBMENU:=Virtualization
   TITLE:=VFIO Non-Privileged userspace driver framework
-  DEPENDS:=@TARGET_x86_64||TARGET_armvirt_64
+  DEPENDS:=@TARGET_x86_64||TARGET_armsr_armv8
   KCONFIG:= \
 	CONFIG_VFIO \
 	CONFIG_VFIO_NOIOMMU=n \
 	CONFIG_VFIO_MDEV=n
-  MODPARAMS.vfio:=enable_unsafe_noiommu_mode=n
   FILES:= \
 	$(LINUX_DIR)/drivers/vfio/vfio.ko \
 	$(LINUX_DIR)/drivers/vfio/vfio_virqfd.ko@lt6.2 \
 	$(LINUX_DIR)/drivers/vfio/vfio_iommu_type1.ko
-  AUTOLOAD:=$(call AutoProbe,vfio vfio_iommu_type1 vfio_virqfd)
+  AUTOLOAD:=$(call AutoProbe,vfio vfio_iommu_type1 +LINUX_6_1:vfio_virqfd)
 endef
 
 define KernelPackage/vfio/description
@@ -101,7 +100,7 @@ $(eval $(call KernelPackage,vfio))
 define KernelPackage/vfio-pci
   SUBMENU:=Virtualization
   TITLE:=Generic VFIO support for any PCI device
-  DEPENDS:=@TARGET_x86_64 @PCI_SUPPORT +kmod-vfio +kmod-irqbypass
+  DEPENDS:=@TARGET_x86_64||TARGET_armsr_armv8 @PCI_SUPPORT +kmod-vfio +kmod-irqbypass
   KCONFIG:= \
 	CONFIG_VFIO_PCI \
 	CONFIG_VFIO_PCI_IGD=n
@@ -141,77 +140,3 @@ define KernelPackage/vhost-net
 endef
 
 $(eval $(call KernelPackage,vhost-net))
-
-define KernelPackage/iommu_v2
-  SUBMENU:=Virtualization
-  TITLE:=IOMMU Version 2 driver
-  KCONFIG:=\
-     CONFIG_UACCE=n \
-     CONFIG_IOMMU_DEBUGFS=n \
-     CONFIG_INTEL_IOMMU=y \
-     CONFIG_INTEL_IOMMU_SVM=n \
-     CONFIG_INTEL_IOMMU_DEFAULT_ON=n \
-     CONFIG_INTEL_IOMMU_SCALABLE_MODE_DEFAULT_ON=n \
-     CONFIG_INTEL_TXT=n \
-     CONFIG_HYPERV_IOMMU=n \
-     CONFIG_IOMMU_SUPPORT=y \
-     CONFIG_IOMMU_DEFAULT_PASSTHROUGH=y \
-     CONFIG_AMD_IOMMU=y \
-     CONFIG_IRQ_REMAP=y \
-     CONFIG_AMD_IOMMU_V2=m
-  DEPENDS:= @PCI_SUPPORT @TARGET_x86_64
-  FILES:= $(LINUX_DIR)/drivers/iommu/amd/iommu_v2.ko
-  AUTOLOAD:=$(call AutoProbe,iommu_v2)
-endef
-
-define KernelPackage/iommu_v2/description
-  This option enables support for the AMD/INTEL IOMMUv2 features
-  of the IOMMU hardware. Select this option if you want
-  to use devices that support the PCI PRI and PASID interface.
-endef
-
-$(eval $(call KernelPackage,iommu_v2))
-
-define KernelPackage/vfio-mdev
-  SUBMENU:=Virtualization
-  TITLE:=VFIO driver support to to virtualize devices
-  DEPENDS:=@TARGET_x86_64
-  KCONFIG:=	\
-	CONFIG_IOMMU_API=y \
-	CONFIG_MMU=y \
-	CONFIG_VFIO=y \
-	CONFIG_VFIO_MDEV \
-	CONFIG_VFIO_MDEV_DEVICE \
-	CONFIG_VFIO_NOIOMMU=y \
-	CONFIG_VFIO_PCI=y \
-	CONFIG_VFIO_PCI_IGD=y
-  FILES:= \
-	$(LINUX_DIR)/drivers/vfio/mdev/mdev.ko \
-	$(LINUX_DIR)/drivers/vfio/mdev/vfio_mdev.ko@lt5.10
-  AUTOLOAD:=$(call AutoProbe,mdev vfio_mdev)
-endef
-
-define KernelPackage/vfio-mdev/description
-  Provides a framework to virtualize devices.
-endef
-
-$(eval $(call KernelPackage,vfio-mdev))
-
-define KernelPackage/i915-gvt
-  SUBMENU:=Virtualization
-  TITLE:=Enable KVM/VFIO support for Intel GVT-g
-  DEPENDS:=@TARGET_x86_64 +kmod-kvm-intel +kmod-drm-i915 +kmod-vfio-mdev
-  KCONFIG:= CONFIG_DRM_I915_GVT_KVMGT
-  FILES:= \
-      $(LINUX_DIR)/drivers/gpu/drm/i915/gvt/kvmgt.ko@lt5.18 \
-      $(LINUX_DIR)/drivers/gpu/drm/i915/kvmgt.ko@ge5.18
-  AUTOLOAD:=$(call AutoProbe,kvmgt)
-endef
-
-define KernelPackage/i915-gvt/description
-  Enable Intel GVT-g graphics virtualization technology host support with 
-  integrated graphics. With GVT-g, it's possible to have one integrated 
-  graphics device shared by multiple VMs under KVM.
-endef
-
-$(eval $(call KernelPackage,i915-gvt))

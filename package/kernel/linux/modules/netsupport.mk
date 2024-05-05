@@ -93,8 +93,7 @@ define KernelPackage/vxlan
 	+IPV6:kmod-udptunnel6
   KCONFIG:=CONFIG_VXLAN
   FILES:= \
-	$(LINUX_DIR)/drivers/net/vxlan.ko@lt5.5 \
-	$(LINUX_DIR)/drivers/net/vxlan/vxlan.ko@ge5.6
+	$(LINUX_DIR)/drivers/net/vxlan/vxlan.ko
   AUTOLOAD:=$(call AutoLoad,13,vxlan)
 endef
 
@@ -1540,7 +1539,6 @@ define KernelPackage/qrtr
   SUBMENU:=$(NETWORK_SUPPORT_MENU)
   TITLE:=Qualcomm IPC Router support
   HIDDEN:=1
-  DEPENDS:=@!(LINUX_5_4||LINUX_5_10)
   KCONFIG:=CONFIG_QRTR
   FILES:= \
   $(LINUX_DIR)/net/qrtr/qrtr.ko
