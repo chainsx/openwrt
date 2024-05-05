@@ -243,16 +243,6 @@ define Device/firefly_rk3399
 endef
 TARGET_DEVICES += firefly_rk3399
 
-define Device/wesine_tpm312
-  DEVICE_VENDOR := Wesine
-  DEVICE_MODEL := TPM312
-  SOC := rk3399
-  UBOOT_DEVICE_NAME := rock-pi-4-rk3399
-  IMAGE/sysupgrade.img.gz := boot-common | boot-script | pine64-img | gzip | append-metadata
-  DEVICE_PACKAGES := -urngd kmod-rtl8821cu rtl8821ce-firmware
-endef
-TARGET_DEVICES += wesine_tpm312
-
 define Device/rongpin_king3399
   DEVICE_VENDOR := Rongpin
   DEVICE_MODEL := King3399
