@@ -1,24 +1,20 @@
-# SPDX-License-Identifier: GPL-2.0-only
-#
-# Copyright (C) 2020 stepheny
-# <https://github.com/aircrack-ng/rtl8812au/pull/619>
-#
-# Copyright (C) 2021-2022 OpenWrt.org
-
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rtl8812au-ac
 PKG_RELEASE:=2
 
+PKG_LICENSE:=GPLv2
+PKG_LICENSE_FILES:=
+
 PKG_SOURCE_URL:=https://github.com/aircrack-ng/rtl8812au.git
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2023-07-23
-PKG_SOURCE_VERSION:=04f600ee54a414b871aea509fcd4709838c8c522
-PKG_MIRROR_HASH:=df8aa45fb2bc2bc706b8fe49b4b7c4216b64232286845bb7dc231d0be309ccac
+PKG_SOURCE_DATE:=2023-01-23
+PKG_SOURCE_VERSION:=e72dacdc4af7cf421484ce9567ef2cc995a16f3a
+PKG_MIRROR_HASH:=4e2168712f62a6d736fbc3422f651c6738a37a40d226617f7d8248ad8abd2433
 
 PKG_LICENSE:=GPL-2.0-only
 PKG_LICENSE_FILES:=LICENSE
-PKG_MAINTAINER:=Marty Jones <mj8263788@gmail.com>
+# PKG_MAINTAINER:=
 
 PKG_BUILD_PARALLEL:=1
 
