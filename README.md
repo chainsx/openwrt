@@ -15,8 +15,8 @@
 ## 损坏的包
 
 ```
-pdnsd-alt 1.2.9b-par
-kmod-rtl8812au-ct
+kmod-r8101
+kmod-rockchip-drm-helper
 ...
 ```
 
