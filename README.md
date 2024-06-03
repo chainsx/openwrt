@@ -18,6 +18,7 @@
 kmod-r8101
 kmod-r8168
 kmod-rockchip-drm-helper
+kmod-usb-net-rtl8152-vendor
 ...
 ```
 
