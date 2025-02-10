@@ -31,7 +31,6 @@ define Package/$(PKG_NAME)
   TITLE:=Lantiq channel driver
   URL:=https://github.com/kochstefan/asterisk_channel_lantiq
   DEPENDS:=+asterisk +kmod-ltq-vmmc
-  USERID:=asterisk=385::vmmc=386
 endef
 
 define Package/$(PKG_NAME)/description
