@@ -514,11 +514,15 @@
 	};
 };
 
-&pcie2x1 {
+/*&pcie2x1 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pcie_reset_h>;
 	reset-gpios = <&gpio1 RK_PB2 GPIO_ACTIVE_HIGH>;
 	vpcie3v3-supply = <&vcc3v3_pcie_p>;
+	status = "okay";
+};*/
+
+&sata2 {
 	status = "okay";
 };
 
