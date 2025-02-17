@@ -87,7 +87,7 @@ define KernelPackage/vfio
 	$(LINUX_DIR)/drivers/vfio/vfio.ko \
 	$(LINUX_DIR)/drivers/vfio/vfio_virqfd.ko@lt6.2 \
 	$(LINUX_DIR)/drivers/vfio/vfio_iommu_type1.ko
-  AUTOLOAD:=$(call AutoProbe,vfio vfio_iommu_type1 +LINUX_6_1:vfio_virqfd)
+  AUTOLOAD:=$(call AutoProbe,vfio vfio_iommu_type1 +vfio_virqfd)
 endef
 
 define KernelPackage/vfio/description
