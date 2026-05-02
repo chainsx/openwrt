@@ -1,0 +1,160 @@
+config EVENTS_TRACE_EV_SYS
+	bool "Enable sys Event"
+	default n
+config EVENTS_TRACE_EV_SYS_DEFAULT
+	bool "Enable EV_SYS in default"
+	depends on EVENTS_TRACE_EV_SYS
+	default n
+
+config EVENTS_TRACE_EV_RT_SYS
+	bool "Enable Rtos Sys Event"
+	default n
+config EVENTS_TRACE_EV_RT_SYS_DEFAULT
+	bool "Enable EV_RT_SYS in default"
+	depends on EVENTS_TRACE_EV_RT_SYS
+	default n
+
+config EVENTS_TRACE_EV_TICK
+	bool "Enable tick Event"
+	default n
+config EVENTS_TRACE_EV_TICK_DEFAULT
+	bool "Enable EV_TICK in default"
+	depends on EVENTS_TRACE_EV_TICK
+	default n
+
+config EVENTS_TRACE_EV_IRQ
+	bool "Enable irq Event"
+	default n
+config EVENTS_TRACE_EV_IRQ_DEFAULT
+	bool "Enable EV_IRQ in default"
+	depends on EVENTS_TRACE_EV_IRQ
+	default n
+
+config EVENTS_TRACE_EV_MEM
+	bool "Enable mem Event"
+	default n
+config EVENTS_TRACE_EV_MEM_DEFAULT
+	bool "Enable EV_MEM in default"
+	depends on EVENTS_TRACE_EV_MEM
+	default n
+
+config EVENTS_TRACE_EV_SCHE
+	bool "Enable sche Event"
+	default n
+config EVENTS_TRACE_EV_SCHE_DEFAULT
+	bool "Enable EV_SCHE in default"
+	depends on EVENTS_TRACE_EV_SCHE
+	default n
+
+config EVENTS_TRACE_EV_RT_TMR
+	bool "Enable rtos timer Event"
+	default n
+config EVENTS_TRACE_EV_RT_TMR_DEFAULT
+	bool "Enable EV_RT_TMR in default"
+	depends on EVENTS_TRACE_EV_RT_TMR
+	default n
+
+config EVENTS_TRACE_EV_MUTEX
+	bool "Enable mutex Event"
+	default n
+config EVENTS_TRACE_EV_MUTEX_DEFAULT
+	bool "Enable EV_MUTEX in default"
+	depends on EVENTS_TRACE_EV_MUTEX
+	default n
+
+config EVENTS_TRACE_EV_SPIN
+	bool "Enable spinlock Event"
+	default n
+config EVENTS_TRACE_EV_SPIN_DEFAULT
+	bool "Enable EV_SPIN in default"
+	depends on EVENTS_TRACE_EV_SPIN
+	default n
+
+config EVENTS_TRACE_EV_SEM
+	bool "Enable sem Event"
+	default n
+config EVENTS_TRACE_EV_SEM_DEFAULT
+	bool "Enable EV_SEM in default"
+	depends on EVENTS_TRACE_EV_SEM
+	default n
+
+config EVENTS_TRACE_EV_RT_NOTIFY
+	bool "Enable RTOS notify Event"
+	default n
+config EVENTS_TRACE_EV_RT_NOTIFY_DEFAULT
+	bool "Enable EV_RT_NOTIFY in default"
+	depends on EVENTS_TRACE_EV_RT_NOTIFY
+	default n
+
+config EVENTS_TRACE_EV_QUEUE
+	bool "Enable queue Event"
+	default n
+config EVENTS_TRACE_EV_QUEUE_DEFAULT
+	bool "Enable EV_QUEUE in default"
+	depends on EVENTS_TRACE_EV_QUEUE
+	default n
+
+config EVENTS_TRACE_EV_RT_QUEUE
+	bool "Enable rtos queue Event"
+	default n
+config EVENTS_TRACE_EV_RT_QUEUE_DEFAULT
+	bool "Enable EV_RT_QUEUE in default"
+	depends on EVENTS_TRACE_EV_RT_QUEUE
+	default n
+
+config EVENTS_TRACE_EV_FS
+	bool "Enable fs Event"
+	default n
+config EVENTS_TRACE_EV_FS_DEFAULT
+	bool "Enable EV_FS in default"
+	depends on EVENTS_TRACE_EV_FS
+	default n
+
+config EVENTS_TRACE_EV_FATFS
+	bool "Enable fatfs Event"
+	default n
+config EVENTS_TRACE_EV_FATFS_DEFAULT
+	bool "Enable EV_FATFS in default"
+	depends on EVENTS_TRACE_EV_FATFS
+	default n
+
+config EVENTS_TRACE_EV_NTFS
+	bool "Enable ntfs Event"
+	default n
+config EVENTS_TRACE_EV_NTFS_DEFAULT
+	bool "Enable EV_NTFS in default"
+	depends on EVENTS_TRACE_EV_NTFS
+	default n
+
+config EVENTS_TRACE_EV_OPENAMP
+	bool "Enable openamp Event"
+	default n
+config EVENTS_TRACE_EV_OPENAMP_DEFAULT
+	bool "Enable EV_OPENAMP in default"
+	depends on EVENTS_TRACE_EV_OPENAMP
+	default n
+
+config EVENTS_TRACE_EV_SUNXIAMP
+	bool "Enable sunxi-amp Event"
+	default n
+config EVENTS_TRACE_EV_SUNXIAMP_DEFAULT
+	bool "Enable EV_SUNXIAMP in default"
+	depends on EVENTS_TRACE_EV_SUNXIAMP
+	default n
+
+config EVENTS_TRACE_EV_USR0
+	bool "Enable user0 Event"
+	default n
+config EVENTS_TRACE_EV_USR0_DEFAULT
+	bool "Enable EV_USR0 in default"
+	depends on EVENTS_TRACE_EV_USR0
+	default n
+
+config EVENTS_TRACE_EV_RPD
+	bool "Enable rpdata event"
+	default n
+config EVENTS_TRACE_EV_RPD_DEFAULT
+	bool "Enable EV_RPD in default"
+	depends on EVENTS_TRACE_EV_RPD
+	default n
+

@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
+menu "CAN Drivers"
+	depends on AW_BSP
+
+config AW_CAN_SUN55I
+	depends on CAN
+	tristate "Allwinner SUN55I T536 CAN controller"
+	default n
+	help
+	  if say Y here, you can use T536 CAN controller.
+
+endmenu
+

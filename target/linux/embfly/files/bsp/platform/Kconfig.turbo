@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: GPL-2.0-only
+menu "Allwinner's Turbo Options"
+	depends on AW_BSP
+
+config AW_BSP_LOWMEM
+	bool "Lowmem config in tiny memory platform"
+	default n
+	depends on AW_BSP
+
+endmenu

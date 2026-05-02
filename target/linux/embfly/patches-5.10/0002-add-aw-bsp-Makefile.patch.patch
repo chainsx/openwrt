@@ -1,0 +1,32 @@
+From bbb4c137cf095c7b56c5b8744e070bb213435a6f Mon Sep 17 00:00:00 2001
+From: Hsun Lai <i@chainsx.cn>
+Date: Sat, 2 May 2026 13:52:19 +0800
+Subject: [PATCH 2/3] add-aw-bsp-Makefile.patch
+
+---
+ Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Makefile b/Makefile
+index 32ff33e93..646eb6606 100644
+--- a/Makefile
++++ b/Makefile
+@@ -499,6 +499,7 @@ LINUXINCLUDE    := \
+ 		-I$(objtree)/arch/$(SRCARCH)/include/generated \
+ 		$(if $(building_out_of_srctree),-I$(srctree)/include) \
+ 		-I$(objtree)/include \
++		-I$(srctree)/bsp/include \
+ 		$(USERINCLUDE)
+ 
+ KBUILD_AFLAGS   := -D__ASSEMBLY__ -fno-PIE
+@@ -663,6 +664,7 @@ core-y		:= init/ usr/
+ drivers-y	:= drivers/ sound/
+ drivers-$(CONFIG_SAMPLES) += samples/
+ drivers-y	+= net/ virt/
++drivers-y	+= bsp/drivers/
+ libs-y		:= lib/
+ endif # KBUILD_EXTMOD
+ 
+-- 
+2.43.0
+

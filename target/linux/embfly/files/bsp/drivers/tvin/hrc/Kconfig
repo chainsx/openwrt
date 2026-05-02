@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: GPL-2.0
+
+menu "HRC Driver"
+	depends on AW_BSP
+
+config AW_HRC
+	tristate "HRC Support for Allwinner SoCs"
+	default n
+	select MEDIA_SUPPORT
+	select VIDEOBUF2_DMA_CONTIG
+	help
+	  Support for sunxi platform HDMI Rx Capture engine,
+	  this module is used to capture HDMI RX images to DDR
+	  for image display or other image processing work.
+
+	  To compile this driver as a module, choose M here.
+	  If you are not sure whether the platform supports it, choose N here.
+
+endmenu

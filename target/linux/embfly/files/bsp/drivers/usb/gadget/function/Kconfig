@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
+if USB_GADGET
+
+config USB_SUNXI_CONFIGFS_F_HID
+	tristate "Allwinner HID function"
+        depends on USB_SUNXI_GADGET
+	depends on USB_CONFIGFS
+	select USB_F_HID
+	help
+	  The HID function driver provides generic emulation of USB
+	  Human Interface Devices (HID).
+
+	  For more information, see Documentation/usb/gadget_hid.rst.
+
+config USB_SUNXI_F_UVC
+	tristate
+
+config USB_SUNXI_CONFIGFS_F_UVC
+	tristate "Allwinner USB Webcam function"
+	depends on USB_SUNXI_GADGET
+	depends on USB_CONFIGFS
+	depends on VIDEO_V4L2
+	depends on VIDEO_DEV
+	select VIDEOBUF2_VMALLOC
+	select USB_SUNXI_F_UVC
+	help
+	  The Webcam function acts as a composite USB Audio and Video Class
+	  device. It provides a userspace API to process UVC control requests
+	  and stream video data to the host.
+
+endif # USB_GADGET

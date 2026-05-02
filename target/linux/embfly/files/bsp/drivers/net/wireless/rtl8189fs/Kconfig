@@ -1,0 +1,5 @@
+config RTL8189FS
+    tristate "Realtek 8189F SDIO WiFi V5.15.10"
+    depends on MMC
+    help
+        Help message of RTL8189FS

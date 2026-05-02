@@ -1,0 +1,25 @@
+From 9d56cb29c9e659dfda1d98ba47011935abb48040 Mon Sep 17 00:00:00 2001
+From: Hsun Lai <i@chainsx.cn>
+Date: Sat, 2 May 2026 13:53:23 +0800
+Subject: [PATCH 3/3] add-aw-bsp-Makefile-lib.patch
+
+---
+ scripts/Makefile.lib | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 8e8c7e527..4635227ae 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -210,7 +210,7 @@ cpp_flags      = -Wp,-MMD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)     \
+ 
+ ld_flags       = $(KBUILD_LDFLAGS) $(ldflags-y) $(LDFLAGS_$(@F))
+ 
+-DTC_INCLUDE    := $(srctree)/scripts/dtc/include-prefixes
++DTC_INCLUDE    := $(srctree)/scripts/dtc/include-prefixes $(srctree)/bsp/include
+ 
+ dtc_cpp_flags  = -Wp,-MMD,$(depfile).pre.tmp -nostdinc                    \
+ 		 $(addprefix -I,$(DTC_INCLUDE))                          \
+-- 
+2.43.0
+
