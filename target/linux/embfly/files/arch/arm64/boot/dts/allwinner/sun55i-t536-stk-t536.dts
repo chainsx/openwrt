@@ -12,6 +12,8 @@
 		pmu0 = &pmu0;
 		standby_param = &standby_param;
 		arisc-config = &arisc_config;
+		ethernet0 = &gmac0;
+		ethernet1 = &gmac1;
 		mmc0 = &sdc0;
 		mmc1 = &sdc1;
 		mmc2 = &sdc2;
@@ -1343,7 +1345,7 @@
 	/*vqmmc-supply = <&reg_aldo1>;*/
 	/*emmc io vol 1.8v*/
 	vqmmc-supply = <&reg_cldo1>;
-	status = "disabled";
+	status = "okay";
 };
 
 &sdc0 {
